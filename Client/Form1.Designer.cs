@@ -28,25 +28,35 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			label1 = new Label();
+			GameTimer = new System.Windows.Forms.Timer(components);
 			SuspendLayout();
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(357, 82);
+			label1.Location = new Point(28, 9);
 			label1.Name = "label1";
 			label1.Size = new Size(108, 15);
 			label1.TabIndex = 0;
 			label1.Text = "Connected players:";
 			label1.Click += label1_Click;
 			// 
+			// GameTimer
+			// 
+			GameTimer.Enabled = true;
+			GameTimer.Interval = 20;
+			GameTimer.Tick += GameTimer_Tick;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = Color.FromArgb(64, 64, 64);
 			ClientSize = new Size(800, 450);
 			Controls.Add(label1);
+			KeyPreview = true;
 			Name = "Form1";
 			Text = "Form1";
 			Load += Form1_Load;
@@ -57,5 +67,6 @@
 		#endregion
 
 		private Label label1;
+		private System.Windows.Forms.Timer GameTimer;
 	}
 }

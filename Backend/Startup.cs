@@ -1,4 +1,5 @@
 ﻿using Backend.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Backend;
 
