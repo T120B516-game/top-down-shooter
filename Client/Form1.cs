@@ -9,13 +9,15 @@ public partial class Form1 : Form
 {
 	private IHubClient? _mainHubClient;
 	private MovementHandler _movementHandler = new();
+    private List<Obstacle> _obstacles = new List<Obstacle>();
 
-	public Form1()
+    public Form1()
 	{
 		InitializeComponent();
 		this.KeyDown += new KeyEventHandler(OnKeyDown);
 		this.KeyUp += new KeyEventHandler(OnKeyUp);
-	}
+        this.Paint += new PaintEventHandler(OnPaint);
+    }
 
 	private async void Form1_Load(object sender, EventArgs e)
 	{
@@ -30,11 +32,29 @@ public partial class Form1 : Form
 			Globals.PersonalID = id;
 			label1.Text = $"Personal id: {id}";
 		});
+		_mainHubClient.Connection.On<string>("ReceiveObstaclesUpdate", obstaclesJson =>
+		{
+			_obstacles = null;
+            _obstacles = DeserializerObstacles.DeserializeObstacles(obstaclesJson);
+            Invalidate();
+
+		});
+
 
 		await _mainHubClient.Connection.SendAsync("CreatePlayer");
 	}
 
-	private void OnReceiveGameUpdate(string updateResponseJson)
+    private void OnPaint(object sender, PaintEventArgs e)
+    {
+        Graphics g = e.Graphics;
+
+        foreach (var obstacle in _obstacles)
+        {
+            obstacle.Draw(g);
+        }
+    }
+
+    private void OnReceiveGameUpdate(string updateResponseJson)
 	{
 		var entities = JsonConvert.DeserializeObject<List<Player>>(updateResponseJson);
 

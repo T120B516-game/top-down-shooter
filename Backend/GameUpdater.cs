@@ -12,8 +12,9 @@ public class GameUpdater
 
 	private IHubCallerClients? _clients = null;
 	private Task _broadcastingTask;
+    private bool _shouldUpdateObstacles = true;
 
-	public GameUpdater(PlayerRepository playerRepository)
+    public GameUpdater(PlayerRepository playerRepository)
 	{
 		_playerRepository = playerRepository;
 	}
@@ -29,16 +30,30 @@ public class GameUpdater
 		_broadcastingTask = LoopBroadcastAsync();
 	}
 
-	private async Task LoopBroadcastAsync()
-	{
-		var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(20));
+    private async Task LoopBroadcastAsync()
+    {
+        var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(20));
 
-		while (await timer.WaitForNextTickAsync())
-		{
-			var players = await _playerRepository.ListAsync();
-			var playersJson = JsonConvert.SerializeObject(players);
+        while (await timer.WaitForNextTickAsync())
+        {
+            var players = await _playerRepository.ListAsync();
+            var playersJson = JsonConvert.SerializeObject(players);
 
-			await _clients.All.SendAsync("ReceiveGameUpdate", playersJson);
-		}
-	}
+            if (_clients != null)
+            {
+                if (_shouldUpdateObstacles) // Only update if there are changes
+                {
+                    var obstacleData = JsonConvert.SerializeObject(ObstacleRepository.Obstacles);
+                    await _clients.All.SendAsync("ReceiveObstaclesUpdate", obstacleData);
+                    _shouldUpdateObstacles = false; // Reset the flag
+                }
+
+                await _clients.All.SendAsync("ReceiveGameUpdate", playersJson);
+            }
+        }
+    }
+    public void MarkObstaclesForUpdate() // Call this method when obstacles change
+    {
+        _shouldUpdateObstacles = true;
+    }
 }
