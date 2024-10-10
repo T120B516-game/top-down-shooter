@@ -7,8 +7,8 @@ namespace Client;
 
 public partial class Form1 : Form
 {
-	private IHubClient _mainHubClient;
-	private MovementHandler _movementHandler;
+	private IHubClient? _mainHubClient;
+	private MovementHandler _movementHandler = new();
 
 	public Form1()
 	{
@@ -89,6 +89,11 @@ public partial class Form1 : Form
 	/// </summary>
 	private void GameTimer_Tick(object sender, EventArgs e)
 	{
+		if (_mainHubClient == null)
+		{
+			return;
+		}
+
 		_ = _movementHandler.SendAsync(_mainHubClient.Connection);
 	}
 }
