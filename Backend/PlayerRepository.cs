@@ -12,9 +12,8 @@ public class PlayerRepository
 	public async Task<Player> CreateAsync()
 	{
 		await _semaphorSlim.WaitAsync();
+		
 		_lastId++;
-		_semaphorSlim.Release();
-
 		var player = new Player()
 		{
 			Id = _lastId,
@@ -25,6 +24,8 @@ public class PlayerRepository
 			Speed = 10,
 		};
 		_players[_lastId] = player;
+
+		_semaphorSlim.Release();
 
 		return player;
 	}
