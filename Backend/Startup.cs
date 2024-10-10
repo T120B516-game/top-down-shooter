@@ -1,5 +1,4 @@
 ﻿using Backend.Hubs;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Backend;
 
@@ -21,6 +20,8 @@ public class Startup
 	private static void ConfigureServices(IServiceCollection services)
 	{
 		services.AddSignalR();
+		services.AddSingleton<PlayerRepository>();
+		services.AddSingleton<GameUpdater>();
 	}
 
 	private static void ConfigureMiddlewares(WebApplication app)

@@ -1,42 +1,44 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
-using Backend.Entities;
-using Backend.Hubs;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
-namespace Backend
+namespace Backend;
+
+/// <summary>
+/// Main update cycle of the game
+/// </summary>
+public class GameUpdater
 {
-	/// <summary>
-	/// Main update cycle of the game
-	/// </summary>
-	static public class GameUpdater
+	private readonly PlayerRepository _playerRepository;
+
+	private IHubCallerClients? _clients = null;
+	private Task _broadcastingTask;
+
+	public GameUpdater(PlayerRepository playerRepository)
 	{
-		static private readonly TimeSpan _updateInterval = TimeSpan.FromMilliseconds(20);
+		_playerRepository = playerRepository;
+	}
 
-		static private Timer _timer;
+	/// <summary>
+	/// Once this function is called, BroadcastGameUpdate starts getting invoked repeatedly (every _updateInterval), broadcasting the game data to all clients
+	/// </summary>
+	public void Start(IHubCallerClients hubContext)
+	{
+		if (_clients is not null) return;
+		_clients = hubContext;
 
-		static private IHubCallerClients? Clients = null;
+		_broadcastingTask = LoopBroadcastAsync();
+	}
 
-		/// <summary>
-		/// Once this function is called, BroadcastGameUpdate starts getting invoked repeatedly (every _updateInterval), broadcasting the game data to all clients
-		/// </summary>
-		static public void StartGameUpdater(IHubCallerClients hubContext)
+	private async Task LoopBroadcastAsync()
+	{
+		var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(20));
+
+		while (await timer.WaitForNextTickAsync())
 		{
-			if(Clients is not null) return;
+			var players = await _playerRepository.ListAsync();
+			var playersJson = JsonConvert.SerializeObject(players);
 
-			Clients = hubContext;
-
-			_timer = new Timer(BroadcastGameUpdate, null, _updateInterval, _updateInterval);
-		}
-
-		static async void BroadcastGameUpdate(object state)
-		{
-			var playersJson = JsonConvert.SerializeObject(GameData.Players);
-
-			await Clients.All.SendAsync("ReceiveGameUpdate", playersJson);
+			await _clients.All.SendAsync("ReceiveGameUpdate", playersJson);
 		}
 	}
 }

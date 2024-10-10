@@ -1,12 +1,21 @@
-﻿using Backend.Entities;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace Backend.Hubs;
 
 public class MainHub : Hub
 {
+	private readonly PlayerRepository _playerRepository;
+	private readonly GameUpdater _gameUpdater;
+
+	public MainHub(
+		PlayerRepository playerRepository, 
+		GameUpdater gameUpdater)
+	{
+		_playerRepository = playerRepository;
+		_gameUpdater = gameUpdater;
+	}
+
 	private static ConcurrentDictionary<string, string> _connectedUsers = [];
 
 	public override async Task OnConnectedAsync()
@@ -15,7 +24,7 @@ public class MainHub : Hub
 
 		if (_connectedUsers.Count == 2)
 		{
-			GameUpdater.StartGameUpdater(Clients);
+			_gameUpdater.Start(Clients);
 		}
 		await base.OnConnectedAsync();
 	}
@@ -31,8 +40,7 @@ public class MainHub : Hub
 	[HubMethodName("CreatePlayer")]
 	public async Task CreatePlayerAsync()
 	{
-		Player player = new Player(GameData.NextID);
-		GameData.Players.Add(player);
+		var player = await _playerRepository.CreateAsync();
 		await Clients.Caller.SendAsync("ReceivePersonalId", player.Id);
 	}
 
@@ -42,7 +50,6 @@ public class MainHub : Hub
 		await Clients.Caller.SendAsync("ReceiveConnectedUsersCount", _connectedUsers.Count);
 	}
 
-
 	/// <summary>
 	/// Updates players position acording to the received direction code
 	/// </summary>
@@ -51,28 +58,30 @@ public class MainHub : Hub
 	[HubMethodName("MovePlayer")]
 	public async Task MovePlayerAsync(int direction, int playerId)
 	{
-		var player = GameData.Players.Where(p => p.Id == playerId).FirstOrDefault();
-        if (player is not null)
-        {
-            switch (direction)
-			{
-				case 1:
-					player.Vertical -= GameData.Speed;
-					player.Image = "PlayerUp";
+		var player = await _playerRepository.GetAsync(playerId);
+		if(player == null)
+		{
+			return;
+		}
+
+		switch (direction)
+		{
+			case 1:
+				player.Y -= player.Speed;
+				player.Image = "PlayerUp";
 				break;
-				case 2:
-					player.Horizontal += GameData.Speed;
-					player.Image = "PlayerRight";
-					break;
-				case 3:
-					player.Vertical += GameData.Speed;
-					player.Image = "PlayerDown";
-					break;
-				case 4:
-					player.Horizontal -= GameData.Speed;
-					player.Image = "PlayerLeft";
-					break;
-			}
-        }
-    }
+			case 2:
+				player.X += player.Speed;
+				player.Image = "PlayerRight";
+				break;
+			case 3:
+				player.Y += player.Speed;
+				player.Image = "PlayerDown";
+				break;
+			case 4:
+				player.X -= player.Speed;
+				player.Image = "PlayerLeft";
+				break;
+		}
+	}
 }
