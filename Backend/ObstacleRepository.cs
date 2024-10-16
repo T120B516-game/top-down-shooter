@@ -1,4 +1,5 @@
 ﻿using Shared;
+using System.Drawing;
 
 namespace Backend
 {
@@ -10,20 +11,18 @@ namespace Backend
         //temporary
         static ObstacleRepository()
         {
-            var penetratable = ObstacleFactory.CreateObstacle("Penetratable");
-            penetratable.X = 500;
-            penetratable.Y = 100;
-            penetratable.Width = 50;
-            penetratable.Height = 50;
-            penetratable.Type = "Penetratable";
+            var factory = new ObstacleFactory();
+
+            var penetratable = factory.CreatePenetratableBuilder()
+                .SetPosition(500, 100)
+                .SetSize(50, 50)
+                .Build();
             Obstacles.Add(penetratable);
 
-            var unpenetratable = ObstacleFactory.CreateObstacle("Unpenetratable");
-            unpenetratable.X = 300;
-            unpenetratable.Y = 300;
-            unpenetratable.Width = 50;
-            unpenetratable.Height = 50;
-            unpenetratable.Type = "Unpenetratable";
+            var unpenetratable = factory.CreateUnpenetratableBuilder()
+                .SetPosition(300, 300)
+                .SetSize(50, 50)
+                .Build();
             Obstacles.Add(unpenetratable);
         }
     }
