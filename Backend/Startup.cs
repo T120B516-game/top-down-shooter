@@ -21,6 +21,7 @@ public class Startup
 	{
 		services.AddSignalR();
 		services.AddSingleton<PlayerRepository>();
+		services.AddSingleton<EnemyRepository>();
 		services.AddSingleton<GameUpdater>();
 	}
 

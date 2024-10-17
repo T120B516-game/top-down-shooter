@@ -54,7 +54,7 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.FromArgb(64, 64, 64);
-			ClientSize = new Size(800, 450);
+			ClientSize = new Size(1184, 761);
 			Controls.Add(label1);
 			KeyPreview = true;
 			Name = "Form1";

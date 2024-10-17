@@ -118,11 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="StationaryShootingRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryShootingRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StationaryShootingUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryShootingUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="dead" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\dead.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="StationaryShootingDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryShootingDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MobileShootingDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileShootingDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StationaryShootingLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryShootingLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MobileMeeleLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileMeeleLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MobileShootingLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileShootingLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MobileShootingUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileShootingUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="PlayerDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MobileMeeleRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileMeeleRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MobileMeeleUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileMeeleUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PlayerLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -130,19 +160,25 @@
   <data name="PlayerRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MobileShootingRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileShootingRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="PlayerUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\up1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZombieDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\zdown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MobileMeeleDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MobileMeeleDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZombieLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\zleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="StationaryMeeleDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryMeeleDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZombieRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\zright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="StationaryMeeleLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryMeeleLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZombieUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\zup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="StationaryMeeleRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryMeeleRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StationaryMeeleUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StationaryMeeleUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

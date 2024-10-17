@@ -9,14 +9,16 @@ namespace Backend;
 public class GameUpdater
 {
 	private readonly PlayerRepository _playerRepository;
+    private readonly EnemyRepository _enemyRepository;
 
 	private IHubCallerClients? _clients = null;
 	private Task _broadcastingTask;
     private bool _shouldUpdateObstacles = true;
 
-    public GameUpdater(PlayerRepository playerRepository)
+    public GameUpdater(PlayerRepository playerRepository, EnemyRepository enemyRepository)
 	{
 		_playerRepository = playerRepository;
+        _enemyRepository = enemyRepository;
 	}
 
 	/// <summary>
@@ -37,6 +39,9 @@ public class GameUpdater
         while (await timer.WaitForNextTickAsync())
         {
             var players = await _playerRepository.ListAsync();
+            var enemies = await _enemyRepository.ListAsync();
+
+            var enemiesJson = JsonConvert.SerializeObject(enemies);
             var playersJson = JsonConvert.SerializeObject(players);
 
             if (_clients != null)
@@ -48,7 +53,7 @@ public class GameUpdater
                     _shouldUpdateObstacles = false; // Reset the flag
                 }
 
-                await _clients.All.SendAsync("ReceiveGameUpdate", playersJson);
+                await _clients.All.SendAsync("ReceiveGameUpdate", playersJson, enemiesJson);
             }
         }
     }

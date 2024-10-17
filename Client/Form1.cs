@@ -23,9 +23,9 @@ public partial class Form1 : Form
 	{
 		_mainHubClient = await MainHubClient.GetClientAsync();
 
-		_mainHubClient.Connection.On<string?>("ReceiveGameUpdate", updateResponseJson =>
+		_mainHubClient.Connection.On<string?, string?>("ReceiveGameUpdate", (playerUpdateResponseJson, enemiesUpdateResponseJson) =>
 		{
-			Invoke(() => OnReceiveGameUpdate(updateResponseJson));
+			Invoke(() => OnReceiveGameUpdate(playerUpdateResponseJson, enemiesUpdateResponseJson));
 		});
 		_mainHubClient.Connection.On<int>("ReceivePersonalId", id =>
 		{
@@ -54,40 +54,74 @@ public partial class Form1 : Form
         }
     }
 
-    private void OnReceiveGameUpdate(string updateResponseJson)
+    private void OnReceiveGameUpdate(string PlayersJson, string EnemiesJson)
 	{
-		var entities = JsonConvert.DeserializeObject<List<Player>>(updateResponseJson);
+		var players = JsonConvert.DeserializeObject<List<Player>>(PlayersJson);
 
-		foreach (var entity in entities)
+		foreach (var player in players)
 		{
-			PictureBox entityPicture = null;
+			PictureBox playerPicture = null;
 
 			foreach (Control control in this.Controls)
 			{
-				if (control is PictureBox box && (int)control.Tag == entity.Id)
+				if (control is PictureBox box && (int)control.Tag == player.Id)
 				{
-					entityPicture = box;
-					entityPicture.Left = entity.X;
-					entityPicture.Top = entity.Y;
-					entityPicture.SizeMode = PictureBoxSizeMode.AutoSize;
-					entityPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(entity.Image);
+					playerPicture = box;
+					playerPicture.Left = player.X;
+					playerPicture.Top = player.Y;
+					playerPicture.SizeMode = PictureBoxSizeMode.AutoSize;
+					playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
 					break;
 				}
 			}
 
-			if (entityPicture == null)
+			if (playerPicture == null)
 			{
-				entityPicture = new PictureBox
+				playerPicture = new PictureBox
 				{
-					Tag = entity.Id,
-					Left = entity.X,
-					Top = entity.Y,
-					Image = (Bitmap)Sprites.ResourceManager.GetObject(entity.Image),
+					Tag = player.Id,
+					Left = player.X,
+					Top = player.Y,
+					Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image),
 					SizeMode = PictureBoxSizeMode.AutoSize
 				};
-				this.Controls.Add(entityPicture);
+				this.Controls.Add(playerPicture);
 			}
 		}
+
+		// Will optimize overlaping code in the future... maybe
+		var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
+		foreach (var enemy in enemies)
+		{
+			PictureBox enemyPicture = null;
+
+			foreach (Control control in this.Controls)
+			{
+				if (control is PictureBox box && (int)control.Tag == enemy.Id)
+				{
+					enemyPicture = box;
+					enemyPicture.Left = enemy.X;
+					enemyPicture.Top = enemy.Y;
+					enemyPicture.SizeMode = PictureBoxSizeMode.AutoSize;
+					enemyPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(enemy.Image);
+					break;
+				}
+			}
+
+			if (enemyPicture == null)
+			{
+				enemyPicture = new PictureBox
+				{
+					Tag = enemy.Id,
+					Left = enemy.X,
+					Top = enemy.Y,
+					Image = (Bitmap)Sprites.ResourceManager.GetObject(enemy.Image),
+					SizeMode = PictureBoxSizeMode.AutoSize
+				};
+				this.Controls.Add(enemyPicture);
+			}
+		}
+
 	}
 
 	private void OnKeyDown(object sender, KeyEventArgs e)

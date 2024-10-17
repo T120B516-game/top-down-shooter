@@ -73,6 +73,86 @@ namespace Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap MobileMeeleDown {
+            get {
+                object obj = ResourceManager.GetObject("MobileMeeleDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileMeeleLeft {
+            get {
+                object obj = ResourceManager.GetObject("MobileMeeleLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileMeeleRight {
+            get {
+                object obj = ResourceManager.GetObject("MobileMeeleRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileMeeleUp {
+            get {
+                object obj = ResourceManager.GetObject("MobileMeeleUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileShootingDown {
+            get {
+                object obj = ResourceManager.GetObject("MobileShootingDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileShootingLeft {
+            get {
+                object obj = ResourceManager.GetObject("MobileShootingLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileShootingRight {
+            get {
+                object obj = ResourceManager.GetObject("MobileShootingRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MobileShootingUp {
+            get {
+                object obj = ResourceManager.GetObject("MobileShootingUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PlayerDown {
             get {
                 object obj = ResourceManager.GetObject("PlayerDown", resourceCulture);
@@ -113,9 +193,9 @@ namespace Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap zdown {
+        internal static System.Drawing.Bitmap StationaryMeeleDown {
             get {
-                object obj = ResourceManager.GetObject("zdown", resourceCulture);
+                object obj = ResourceManager.GetObject("StationaryMeeleDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +203,9 @@ namespace Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap zleft {
+        internal static System.Drawing.Bitmap StationaryMeeleLeft {
             get {
-                object obj = ResourceManager.GetObject("zleft", resourceCulture);
+                object obj = ResourceManager.GetObject("StationaryMeeleLeft", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +213,9 @@ namespace Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap zright {
+        internal static System.Drawing.Bitmap StationaryMeeleRight {
             get {
-                object obj = ResourceManager.GetObject("zright", resourceCulture);
+                object obj = ResourceManager.GetObject("StationaryMeeleRight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +223,49 @@ namespace Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap zup {
+        internal static System.Drawing.Bitmap StationaryMeeleUp {
             get {
-                object obj = ResourceManager.GetObject("zup", resourceCulture);
+                object obj = ResourceManager.GetObject("StationaryMeeleUp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StationaryShootingDown {
+            get {
+                object obj = ResourceManager.GetObject("StationaryShootingDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StationaryShootingLeft {
+            get {
+                object obj = ResourceManager.GetObject("StationaryShootingLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StationaryShootingRight {
+            get {
+                object obj = ResourceManager.GetObject("StationaryShootingRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StationaryShootingUp {
+            get {
+                object obj = ResourceManager.GetObject("StationaryShootingUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
