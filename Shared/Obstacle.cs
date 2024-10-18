@@ -95,6 +95,7 @@ namespace Shared
     {
         public IObstacleBuilder CreatePenetratableBuilder()
         {
+            //grazinti obstacle, o ne obstacle builder.
             return new PenetratableObstacleBuilder();
         }
 
