@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
+
 namespace Backend;
 
 /// <summary>
@@ -11,7 +12,7 @@ public class GameUpdater
 	private readonly PlayerRepository _playerRepository;
     private readonly EnemyRepository _enemyRepository;
 
-	private IHubCallerClients? _clients = null;
+    private IHubCallerClients? _clients = null;
 	private Task _broadcastingTask;
     private bool _shouldUpdateObstacles = true;
 
@@ -43,6 +44,11 @@ public class GameUpdater
 
             var enemiesJson = JsonConvert.SerializeObject(enemies);
             var playersJson = JsonConvert.SerializeObject(players);
+
+            foreach (var enemy in enemies)
+            {
+                enemy.PerformMovement(players);
+            }
 
             if (_clients != null)
             {

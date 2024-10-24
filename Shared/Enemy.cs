@@ -18,7 +18,7 @@ namespace Shared
 		public int Health { get; set; }
 		public string Type { get; set; }
 
-		//public IMovementBehaviour MovementBehaviour { get; set;}
+		public IMovementBehaviour MovementBehaviour	{ get; set;}
 
 		protected Dictionary<string, string> ImagesDictionary;
 
@@ -30,7 +30,11 @@ namespace Shared
 			Id = id;
 		}
 
-		public abstract void DoNextAction();
+		public void PerformMovement(List<Player> players)
+		{
+			MovementBehaviour.Move(this, players);
+		}
+
 		public abstract void SetMovementBehaviour();
 	}
 
@@ -51,15 +55,10 @@ namespace Shared
 			this.Speed = 20;
 		}
 
-		public override void DoNextAction()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetMovementBehaviour()
 		{
-			throw new NotImplementedException();
-		}
+            MovementBehaviour = new AdvancedMovement();
+        }
 	}
 
 	public class MobileShootingEnemy : Enemy
@@ -79,15 +78,10 @@ namespace Shared
 			this.Speed = 20;
 		}
 
-		public override void DoNextAction()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetMovementBehaviour()
 		{
-			throw new NotImplementedException();
-		}
+            MovementBehaviour = new AdvancedMovement();
+        }
 	}
 
 	public class MobileMeeleEnemy: Enemy
@@ -107,15 +101,10 @@ namespace Shared
 			this.Speed = 20;
 		}
 
-		public override void DoNextAction()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetMovementBehaviour()
 		{
-			throw new NotImplementedException();
-		}
+            MovementBehaviour = new AdvancedMovement();
+        }
 	}
 
 	public class StationaryExplosiveEnemy : Enemy
@@ -133,15 +122,10 @@ namespace Shared
 			this.Image = ImagesDictionary["up"];
 		}
 
-		public override void DoNextAction()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetMovementBehaviour()
 		{
-			throw new NotImplementedException();
-		}
+            MovementBehaviour = new SimpleMovement();
+        }
 	}
 
 	public class StationaryShootingEnemy : Enemy
@@ -159,15 +143,10 @@ namespace Shared
 			this.Image = ImagesDictionary["up"];
 		}
 
-		public override void DoNextAction()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetMovementBehaviour()
 		{
-			throw new NotImplementedException();
-		}
+            MovementBehaviour = new SimpleMovement();
+        }
 	}
 
 	public class StationaryMeeleEnemy : Enemy
@@ -184,16 +163,10 @@ namespace Shared
 			};
 			this.Image = ImagesDictionary["up"];
 		}
-
-		public override void DoNextAction()
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void SetMovementBehaviour()
 		{
-			throw new NotImplementedException();
-		}
+            MovementBehaviour = new SimpleMovement();
+        }
 	}
 
 	public class EnemyConverter : JsonConverter<Enemy>
