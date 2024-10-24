@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-	public abstract class Enemy
+	public abstract class Enemy : IClonable<Enemy>
 	{
 		public int Id { get; set; }
 		public int X {  get; set; }
@@ -32,6 +32,67 @@ namespace Shared
 
 		public abstract void DoNextAction();
 		public abstract void SetMovementBehaviour();
+
+		virtual public Enemy DeepClone()
+		{
+			Enemy enemyClone;
+			switch (this.Type)
+			{
+				case "mobile_explosive":
+					enemyClone = new MobileExplosiveEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "mobile_shooting":
+					enemyClone = new MobileShootingEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "mobile_meele":
+					enemyClone = new MobileMeeleEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "stationary_explosive":
+					enemyClone = new StationaryExplosiveEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "stationary_shooting":
+					enemyClone = new StationaryShootingEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "statioanry_meele":
+					enemyClone = new StationaryMeeleEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				default:
+					throw new ArgumentException("Unknown enemy type");
+			}
+			enemyClone.Image = this.Image;
+			// IMovementBehaviour MovementBehaviour = this.MovementBehaviour;
+			return enemyClone;
+		}
+
+		virtual public Enemy ShallowClone()
+		{
+			Enemy enemyClone;
+			switch (this.Type)
+			{
+				case "mobile_explosive":
+					enemyClone = new MobileExplosiveEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "mobile_shooting":
+					enemyClone = new MobileShootingEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "mobile_meele":
+					enemyClone = new MobileMeeleEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "stationary_explosive":
+					enemyClone = new StationaryExplosiveEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "stationary_shooting":
+					enemyClone = new StationaryShootingEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				case "statioanry_meele":
+					enemyClone = new StationaryMeeleEnemy(this.X, this.Y, this.Health, this.Id);
+					break;
+				default:
+					throw new ArgumentException("Unknown enemy type");
+			}
+			enemyClone.Image = this.Image;
+			return enemyClone;
+		}
 	}
 
 	public class MobileExplosiveEnemy : Enemy
@@ -90,7 +151,7 @@ namespace Shared
 		}
 	}
 
-	public class MobileMeeleEnemy: Enemy
+	public class MobileMeeleEnemy : Enemy
 	{
 		public int Speed { get; set; }
 		public MobileMeeleEnemy(int _X, int _Y, int _Health, int _Id) : base(_X, _Y, _Health, _Id)
@@ -142,6 +203,7 @@ namespace Shared
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 
 	public class StationaryShootingEnemy : Enemy
@@ -158,6 +220,7 @@ namespace Shared
 			};
 			this.Image = ImagesDictionary["up"];
 		}
+
 
 		public override void DoNextAction()
 		{
