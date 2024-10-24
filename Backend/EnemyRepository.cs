@@ -22,6 +22,16 @@ namespace Backend
             Enemies.Add(stationaryShootingEnemy);
         }
 
+			Enemies.Add(mobileShootingEnemy);
+			Enemies.Add(stationaryShootingEnemy);
+
+			var clonedEnemy = mobileMeeleEnemy.ShallowClone();
+			clonedEnemy.SetMovementBehaviour();
+
+			Enemies.Add(clonedEnemy);
+
+		}
+
 		public async Task<List<Enemy>> ListAsync()
 		{
 			return Enemies;
