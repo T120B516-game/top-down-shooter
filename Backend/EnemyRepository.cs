@@ -20,8 +20,6 @@ namespace Backend
 			Enemies.Add(mobileMeeleEnemy);
             Enemies.Add(mobileShootingEnemy);
             Enemies.Add(stationaryShootingEnemy);
-        }
-
 			Enemies.Add(mobileShootingEnemy);
 			Enemies.Add(stationaryShootingEnemy);
 

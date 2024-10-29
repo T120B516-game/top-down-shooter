@@ -9,6 +9,7 @@ public enum Direction
 	Right = 2,
 	Down = 3,
 	Left = 4,
+	Undo = 5
 }
 
 public enum KeyEventType
@@ -25,6 +26,7 @@ public class MovementHandler
 		[Direction.Right] = false,
 		[Direction.Down] = false,
 		[Direction.Left] = false,
+		[Direction.Undo] = false
 	};
 
 	public void ConsumeKeyEvent(KeyEventArgs e, KeyEventType keyEventType)
@@ -58,6 +60,7 @@ public class MovementHandler
 			Keys.Right => Direction.Right,
 			Keys.Down => Direction.Down,
 			Keys.Left => Direction.Left,
+			Keys.Z => Direction.Undo,
 			_ => null
 		};
 	}

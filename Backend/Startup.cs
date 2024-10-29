@@ -1,4 +1,5 @@
-﻿using Backend.Hubs;
+﻿using Backend.BehavioralPatterns;
+using Backend.Hubs;
 
 namespace Backend;
 
@@ -23,6 +24,7 @@ public class Startup
 		services.AddSingleton<PlayerRepository>();
 		services.AddSingleton<EnemyRepository>();
 		services.AddSingleton<GameUpdater>();
+		services.AddSingleton<PlayerController>();
 	}
 
 	private static void ConfigureMiddlewares(WebApplication app)

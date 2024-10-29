@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Backend.BehavioralPatterns;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
 namespace Backend.Hubs;
@@ -7,13 +8,16 @@ public class MainHub : Hub
 {
 	private readonly PlayerRepository _playerRepository;
 	private readonly GameUpdater _gameUpdater;
+	private readonly PlayerController _playerController;
 
 	public MainHub(
 		PlayerRepository playerRepository, 
-		GameUpdater gameUpdater)
+		GameUpdater gameUpdater,
+		PlayerController playerController)
 	{
 		_playerRepository = playerRepository;
 		_gameUpdater = gameUpdater;
+		_playerController = playerController;
 	}
 
 	private static ConcurrentDictionary<string, string> _connectedUsers = [];
@@ -52,6 +56,7 @@ public class MainHub : Hub
 
 	/// <summary>
 	/// Updates players position acording to the received direction code
+	/// Undo (5) direction is added for testing
 	/// </summary>
 	/// <param name="direction">Integer which references direction (1 - up, 2 - right, 3 - down, 4 - left)</param>
 	/// <param name="playerId">The id of the player, whose coordinates need to be changed</param>
@@ -67,20 +72,19 @@ public class MainHub : Hub
 		switch (direction)
 		{
 			case 1:
-				player.Y -= player.Speed;
-				player.Image = "PlayerUp";
+				_playerController.MoveUp(player);
 				break;
 			case 2:
-				player.X += player.Speed;
-				player.Image = "PlayerRight";
+				_playerController.MoveRight(player);
 				break;
 			case 3:
-				player.Y += player.Speed;
-				player.Image = "PlayerDown";
+				_playerController.MoveDown(player);
 				break;
 			case 4:
-				player.X -= player.Speed;
-				player.Image = "PlayerLeft";
+				_playerController.MoveLeft(player);
+				break;
+			case 5:
+				_playerController.Undo();
 				break;
 		}
 	}
