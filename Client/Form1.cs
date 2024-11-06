@@ -14,7 +14,8 @@ public partial class Form1 : Form
     public Form1()
 	{
 		InitializeComponent();
-		this.KeyDown += new KeyEventHandler(OnKeyDown);
+        this.DoubleBuffered = true;
+        this.KeyDown += new KeyEventHandler(OnKeyDown);
 		this.KeyUp += new KeyEventHandler(OnKeyUp);
         this.Paint += new PaintEventHandler(OnPaint);
     }
@@ -26,7 +27,7 @@ public partial class Form1 : Form
 		_mainHubClient.Connection.On<string?, string?>("ReceiveGameUpdate", (playerUpdateResponseJson, enemiesUpdateResponseJson) =>
 		{
 			Invoke(() => OnReceiveGameUpdate(playerUpdateResponseJson, enemiesUpdateResponseJson));
-		});
+        });
 		_mainHubClient.Connection.On<int>("ReceivePersonalId", id =>
 		{
 			Globals.PersonalID = id;
@@ -37,8 +38,7 @@ public partial class Form1 : Form
 			_obstacles = null;
             _obstacles = DeserializerObstacles.DeserializeObstacles(obstaclesJson);
             Invalidate();
-
-		});
+        });
 
 
 		await _mainHubClient.Connection.SendAsync("CreatePlayer");
@@ -58,39 +58,56 @@ public partial class Form1 : Form
 	{
 		var players = JsonConvert.DeserializeObject<List<Player>>(PlayersJson);
 
-		foreach (var player in players)
-		{
-			PictureBox playerPicture = null;
+        foreach (var player in players)
+        {
+            PictureBox? playerPicture = null;
 
-			foreach (Control control in this.Controls)
-			{
-				if (control is PictureBox box && (int)control.Tag == player.Id)
-				{
-					playerPicture = box;
-					playerPicture.Left = player.X;
-					playerPicture.Top = player.Y;
-					playerPicture.SizeMode = PictureBoxSizeMode.AutoSize;
-					playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
-					break;
-				}
-			}
+            // Check if a PictureBox for this player already exists
+            foreach (Control control in this.Controls)
+            {
+                if (control is PictureBox box && (int)control.Tag == player.Id)
+                {
+                    playerPicture = box;
+                    break;
+                }
+            }
 
-			if (playerPicture == null)
-			{
-				playerPicture = new PictureBox
-				{
-					Tag = player.Id,
-					Left = player.X,
-					Top = player.Y,
-					Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image),
-					SizeMode = PictureBoxSizeMode.AutoSize
-				};
-				this.Controls.Add(playerPicture);
-			}
-		}
+            // If PictureBox doesn't exist, create and add it
+            if (playerPicture == null)
+            {
+                playerPicture = new PictureBox
+                {
+                    Tag = player.Id,
+                    SizeMode = PictureBoxSizeMode.AutoSize
+                };
+                this.Controls.Add(playerPicture);
+            }
 
-		// Will optimize overlaping code in the future... maybe
-		var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
+            // Set player position and image (updated each time)
+            playerPicture.Left = player.X;
+            playerPicture.Top = player.Y;
+            playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
+
+            // Adapt the player to PlayerComponent and apply decorators
+            PlayerComponent playerComponent = new PlayerAdapter(player);
+
+            // Apply decorators conditionally
+            if (player.Health < 50)
+            {
+                playerComponent = new HudDecorator(playerComponent, player.Health);
+            }
+
+            playerComponent = new AppearanceDecorator(playerComponent, Color.Green);  // Example of appearance decorator
+
+            // Use the decorated player component to draw (optional: graphics can be on a canvas or form as needed)
+            using (Graphics g = this.CreateGraphics())
+            {
+                playerComponent.Draw(g);
+            }
+        }
+
+        // Will optimize overlaping code in the future... maybe
+        var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
 		foreach (var enemy in enemies)
 		{
 			PictureBox enemyPicture = null;
@@ -122,7 +139,9 @@ public partial class Form1 : Form
 			}
 		}
 
-	}
+        Invalidate();
+
+    }
 
 	private void OnKeyDown(object sender, KeyEventArgs e)
 	{
