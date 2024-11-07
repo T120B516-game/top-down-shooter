@@ -7,15 +7,18 @@ namespace Client;
 
 public partial class Form1 : Form, IMessageFilter
 {
-	private IHubClient? _mainHubClient;
-	private ClientUpdateHandler _updateHandler;
+    private IHubClient? _mainHubClient;
+    private ClientUpdateHandler _updateHandler;
 	private List<Obstacle> _obstacles = [];
+    private ShootingHandler _shootingHandler = new ShootingHandler();
 
 	public Form1()
 	{
 		InitializeComponent();
 		Application.AddMessageFilter(this);
 		this.Paint += new PaintEventHandler(OnPaint);
+
+        InitializeWeapon();
 	}
 
 	private async void Form1_Load(object sender, EventArgs e)
@@ -41,18 +44,24 @@ public partial class Form1 : Form, IMessageFilter
 			Invalidate();
 		});
 
-		await _mainHubClient.Connection.SendAsync("CreatePlayer");
-	}
+        await _mainHubClient.Connection.SendAsync("CreatePlayer");
+    }
 
 	private void OnPaint(object sender, PaintEventArgs e)
 	{
 		Graphics g = e.Graphics;
 
-		foreach (var obstacle in _obstacles)
-		{
-			obstacle.Draw(g);
-		}
-	}
+        foreach (var obstacle in _obstacles)
+        {
+            obstacle.Draw(g);
+        }
+    }
+
+    private void InitializeWeapon()
+    {
+        Weapon initialWeapon = new Pistol();
+        _shootingHandler.SetWeapon(initialWeapon);
+    }
 
 	private void OnReceiveGameUpdate(string PlayersJson, string EnemiesJson)
 	{

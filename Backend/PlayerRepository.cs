@@ -20,7 +20,7 @@ public class PlayerRepository
 			X = 100,
 			Y = 100,
 			Image = "PlayerUp",
-			Health = 100,
+			Health = 40,
 			Speed = 10,
 		};
 		_players[_lastId] = player;
