@@ -10,31 +10,34 @@ public partial class Form1 : Form
     private IHubClient? _mainHubClient;
     private MovementHandler _movementHandler = new();
     private List<Obstacle> _obstacles = new List<Obstacle>();
+    private ShootingHandler _shootingHandler = new ShootingHandler();
 
     public Form1()
-	{
-		InitializeComponent();
-		this.KeyDown += new KeyEventHandler(OnKeyDown);
-		this.KeyUp += new KeyEventHandler(OnKeyUp);
+    {
+        InitializeComponent();
+        this.KeyDown += new KeyEventHandler(OnKeyDown);
+        this.KeyUp += new KeyEventHandler(OnKeyUp);
         this.Paint += new PaintEventHandler(OnPaint);
+
+        InitializeWeapon();
     }
 
     private async void Form1_Load(object sender, EventArgs e)
     {
         _mainHubClient = await MainHubClient.GetClientAsync();
 
-		_mainHubClient.Connection.On<string?, string?>("ReceiveGameUpdate", (playerUpdateResponseJson, enemiesUpdateResponseJson) =>
-		{
-			Invoke(() => OnReceiveGameUpdate(playerUpdateResponseJson, enemiesUpdateResponseJson));
-		});
-		_mainHubClient.Connection.On<int>("ReceivePersonalId", id =>
-		{
-			Globals.PersonalID = id;
-			label1.Text = $"Personal id: {id}";
-		});
-		_mainHubClient.Connection.On<string>("ReceiveObstaclesUpdate", obstaclesJson =>
-		{
-			_obstacles = null;
+        _mainHubClient.Connection.On<string?, string?>("ReceiveGameUpdate", (playerUpdateResponseJson, enemiesUpdateResponseJson) =>
+        {
+            Invoke(() => OnReceiveGameUpdate(playerUpdateResponseJson, enemiesUpdateResponseJson));
+        });
+        _mainHubClient.Connection.On<int>("ReceivePersonalId", id =>
+        {
+            Globals.PersonalID = id;
+            label1.Text = $"Personal id: {id}";
+        });
+        _mainHubClient.Connection.On<string>("ReceiveObstaclesUpdate", obstaclesJson =>
+        {
+            _obstacles = null;
             _obstacles = DeserializerObstacles.DeserializeObstacles(obstaclesJson);
             Invalidate();
         });
@@ -52,46 +55,52 @@ public partial class Form1 : Form
         }
     }
 
+    private void InitializeWeapon()
+    {
+        Weapon initialWeapon = new Pistol();
+        _shootingHandler.SetWeapon(initialWeapon);
+    }
+
     private void OnReceiveGameUpdate(string PlayersJson, string EnemiesJson)
     {
         var players = JsonConvert.DeserializeObject<List<Player>>(PlayersJson);
 
-		foreach (var player in players)
-		{
-			PictureBox playerPicture = null;
+        foreach (var player in players)
+        {
+            PictureBox playerPicture = null;
 
-			foreach (Control control in this.Controls)
-			{
-				if (control is PictureBox box && (int)control.Tag == player.Id)
-				{
-					playerPicture = box;
-					playerPicture.Left = player.X;
-					playerPicture.Top = player.Y;
-					playerPicture.SizeMode = PictureBoxSizeMode.AutoSize;
-					playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
-					break;
-				}
-			}
+            foreach (Control control in this.Controls)
+            {
+                if (control is PictureBox box && (int)control.Tag == player.Id)
+                {
+                    playerPicture = box;
+                    playerPicture.Left = player.X;
+                    playerPicture.Top = player.Y;
+                    playerPicture.SizeMode = PictureBoxSizeMode.AutoSize;
+                    playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
+                    break;
+                }
+            }
 
-			if (playerPicture == null)
-			{
-				playerPicture = new PictureBox
-				{
-					Tag = player.Id,
-					Left = player.X,
-					Top = player.Y,
-					Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image),
-					SizeMode = PictureBoxSizeMode.AutoSize
-				};
-				this.Controls.Add(playerPicture);
-			}
-		}
+            if (playerPicture == null)
+            {
+                playerPicture = new PictureBox
+                {
+                    Tag = player.Id,
+                    Left = player.X,
+                    Top = player.Y,
+                    Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image),
+                    SizeMode = PictureBoxSizeMode.AutoSize
+                };
+                this.Controls.Add(playerPicture);
+            }
+        }
 
-		// Will optimize overlaping code in the future... maybe
-		var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
-		foreach (var enemy in enemies)
-		{
-			PictureBox enemyPicture = null;
+        // Will optimize overlaping code in the future... maybe
+        var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
+        foreach (var enemy in enemies)
+        {
+            PictureBox enemyPicture = null;
 
             foreach (Control control in this.Controls)
             {
@@ -120,11 +129,12 @@ public partial class Form1 : Form
             }
         }
 
-	}
+    }
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
         _movementHandler.ConsumeKeyEvent(e, KeyEventType.KeyDown);
+        _shootingHandler.HandleShootingInput(e);
     }
 
     private void OnKeyUp(object sender, KeyEventArgs e)
