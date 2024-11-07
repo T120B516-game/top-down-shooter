@@ -1,41 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Shared;
 
-namespace Shared
+public interface IMovementBehaviour
 {
-    public interface IMovementBehaviour
+    void Move(Enemy enemy, List<Player> players);
+}
+
+public class SimpleMovement : IMovementBehaviour
+{
+	private readonly Random _random = new();
+
+    public void Move(Enemy enemy, List<Player> players)
     {
-        void Move(Enemy enemy, List<Player> players);
+        enemy.X += _random.Next(-1, 2);
+        enemy.Y += _random.Next(-1, 2);
     }
+}
 
-    public class SimpleMovement : IMovementBehaviour
+public class AdvancedMovement : IMovementBehaviour
+{
+    public void Move(Enemy enemy, List<Player> players)
     {
-        private Random _random = new Random();
-
-        public void Move(Enemy enemy, List<Player> players)
+        var closestPlayer = players
+            .OrderBy(p => CalculateDistance(p, enemy))
+            .FirstOrDefault();
+        
+        if (closestPlayer != null)
         {
-            enemy.X += _random.Next(-1, 2);
-            enemy.Y += _random.Next(-1, 2);
+            if (enemy.X < closestPlayer.X) enemy.X++;
+            if (enemy.X > closestPlayer.X) enemy.X--;
+            if (enemy.Y < closestPlayer.Y) enemy.Y++;
+            if (enemy.Y > closestPlayer.Y) enemy.Y--;
         }
     }
 
-    public class AdvancedMovement : IMovementBehaviour
+    private static double CalculateDistance(Player player, Enemy enemy)
     {
-        public void Move(Enemy enemy, List<Player> players)
-        {
-            Player closestPlayer = players.OrderBy(p => Math.Sqrt(Math.Pow(p.X - enemy.X, 2) + Math.Pow(p.Y - enemy.Y, 2)))
-                                          .FirstOrDefault();
-            if (closestPlayer != null)
-            {
-                if (enemy.X < closestPlayer.X) enemy.X++;
-                if (enemy.X > closestPlayer.X) enemy.X--;
-                if (enemy.Y < closestPlayer.Y) enemy.Y++;
-                if (enemy.Y > closestPlayer.Y) enemy.Y--;
-            
-            }
-        }
-    }
+        var xDistance = Math.Pow(player.X - enemy.X, 2);
+        var yDistance = Math.Pow(player.Y - enemy.Y, 2);
+
+		return Math.Sqrt(xDistance + yDistance);
+	}
 }

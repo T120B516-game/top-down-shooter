@@ -1,38 +1,39 @@
 ﻿using Backend.CreationalPatterns;
 using Shared;
 
-namespace Backend
+namespace Backend;
+
+public class EnemyRepository
 {
-	public class EnemyRepository
+	private readonly List<Enemy> _enemies = [];
+	private readonly EnemyAbstractFactory _stationaryEnemyFactory = new StationaryEnemyFactory();
+	private readonly EnemyAbstractFactory _mobileEnemyFactory = new MobileEnemyFactory();
+
+	public EnemyRepository()
 	{
-		private List<Enemy> Enemies { get; set; } = new List<Enemy>();
-		private EnemyAbstractFactory _StationaryEnemyFactory = new StationaryEnemyFactory();
-		private EnemyAbstractFactory _MobileEnemyFactory = new MobileEnemyFactory();
+		var mobileMeeleEnemy = _mobileEnemyFactory.CreateMeeleEnemy(200, 500, 100, 5);
+		mobileMeeleEnemy.SetMovementBehaviour();
 
-		public EnemyRepository()
-		{
-			var mobileMeeleEnemy = _MobileEnemyFactory.CreateMeeleEnemy(200, 500, 100, 5);
-			mobileMeeleEnemy.SetMovementBehaviour();
-			var mobileShootingEnemy = _MobileEnemyFactory.CreateShootingEnemy(200, 700, 100, 6);
-			mobileShootingEnemy.SetMovementBehaviour();
-			var stationaryShootingEnemy = _StationaryEnemyFactory.CreateShootingEnemy(300, 550, 100, 7);
-			stationaryShootingEnemy.SetMovementBehaviour();
-			Enemies.Add(mobileMeeleEnemy);
-            Enemies.Add(mobileShootingEnemy);
-            Enemies.Add(stationaryShootingEnemy);
-			Enemies.Add(mobileShootingEnemy);
-			Enemies.Add(stationaryShootingEnemy);
+		var mobileShootingEnemy = _mobileEnemyFactory.CreateShootingEnemy(200, 700, 100, 6);
+		mobileShootingEnemy.SetMovementBehaviour();
 
-			var clonedEnemy = mobileMeeleEnemy.ShallowClone();
-			clonedEnemy.SetMovementBehaviour();
+		var stationaryShootingEnemy = _stationaryEnemyFactory.CreateShootingEnemy(300, 550, 100, 7);
+		stationaryShootingEnemy.SetMovementBehaviour();
+		
+		_enemies.Add(mobileMeeleEnemy);
+		_enemies.Add(mobileShootingEnemy);
+		_enemies.Add(stationaryShootingEnemy);
+		_enemies.Add(mobileShootingEnemy);
+		_enemies.Add(stationaryShootingEnemy);
 
-			Enemies.Add(clonedEnemy);
+		var clonedEnemy = mobileMeeleEnemy.ShallowClone();
+		clonedEnemy.SetMovementBehaviour();
 
-		}
+		_enemies.Add(clonedEnemy);
+	}
 
-		public async Task<List<Enemy>> ListAsync()
-		{
-			return Enemies;
-		}
+	public async Task<List<Enemy>> ListAsync()
+	{
+		return _enemies;
 	}
 }

@@ -1,167 +1,168 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace Shared
+namespace Shared;
+
+public abstract class Obstacle
 {
-    public abstract class Obstacle
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Type { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public string Type { get; set; }
 
-        public abstract void Draw(Graphics g);
+    public abstract void Draw(Graphics g);
+}
+
+public class Penetratable : Obstacle
+{
+    public override void Draw(Graphics g)
+    {
+        g.FillRectangle(Brushes.Green, X, Y, Width, Height);
+    }
+}
+
+public class Unpenetratable : Obstacle
+{
+    public override void Draw(Graphics g)
+    {
+        g.FillRectangle(Brushes.Red, X, Y, Width, Height);
+    }
+}
+
+public interface IObstacleBuilder
+{
+    IObstacleBuilder SetPosition(int x, int y);
+    IObstacleBuilder SetSize(int width, int height);
+    Obstacle Build();
+}
+
+public class PenetratableObstacleBuilder : IObstacleBuilder
+{
+    private readonly Penetratable _obstacle = new();
+
+    public IObstacleBuilder SetPosition(int x, int y)
+    {
+        _obstacle.X = x;
+        _obstacle.Y = y;
+        return this;
     }
 
-    public class Penetratable : Obstacle
+    public IObstacleBuilder SetSize(int width, int height)
     {
-        public override void Draw(Graphics g)
-        {
-            g.FillRectangle(Brushes.Green, X, Y, Width, Height);
-        }
+        _obstacle.Width = width;
+        _obstacle.Height = height;
+        return this;
     }
 
-    public class Unpenetratable : Obstacle
+    public Obstacle Build()
     {
-        public override void Draw(Graphics g)
-        {
-            g.FillRectangle(Brushes.Red, X, Y, Width, Height);
-        }
+        _obstacle.Type = "Penetratable";
+        return _obstacle;
+    }
+}
+
+public class UnpenetratableObstacleBuilder : IObstacleBuilder
+{
+    private readonly Unpenetratable _obstacle = new();
+
+    public IObstacleBuilder SetPosition(int x, int y)
+    {
+        _obstacle.X = x;
+        _obstacle.Y = y;
+        return this;
     }
 
-    public interface IObstacleBuilder
+    public IObstacleBuilder SetSize(int width, int height)
     {
-        IObstacleBuilder SetPosition(int x, int y);
-        IObstacleBuilder SetSize(int width, int height);
-        Obstacle Build();
+        _obstacle.Width = width;
+        _obstacle.Height = height;
+        return this;
     }
 
-    public class PenetratableObstacleBuilder : IObstacleBuilder
+    public Obstacle Build()
     {
-        private Penetratable _obstacle = new Penetratable();
+        _obstacle.Type = "Unpenetratable";
+        return _obstacle;
+    }
+}
 
-        public IObstacleBuilder SetPosition(int x, int y)
-        {
-            _obstacle.X = x;
-            _obstacle.Y = y;
-            return this;
-        }
-
-        public IObstacleBuilder SetSize(int width, int height)
-        {
-            _obstacle.Width = width;
-            _obstacle.Height = height;
-            return this;
-        }
-
-        public Obstacle Build()
-        {
-            _obstacle.Type = "Penetratable";
-            return _obstacle;
-        }
+public class ObstacleFactory
+{
+    public IObstacleBuilder CreatePenetratableBuilder()
+    {
+        //grazinti obstacle, o ne obstacle builder.
+        return new PenetratableObstacleBuilder();
     }
 
-    public class UnpenetratableObstacleBuilder : IObstacleBuilder
+    public IObstacleBuilder CreateUnpenetratableBuilder()
     {
-        private Unpenetratable _obstacle = new Unpenetratable();
+        return new UnpenetratableObstacleBuilder();
+    }
+}
 
-        public IObstacleBuilder SetPosition(int x, int y)
+// JSON converter for Obstacles
+public class ObstacleConverter : JsonConverter<Obstacle>
+{
+    private readonly ObstacleFactory _factory = new();
+
+    public override Obstacle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var jsonDocument = JsonDocument.ParseValue(ref reader);
+        var jsonObject = jsonDocument.RootElement;
+
+        var type = jsonObject.GetProperty("Type").GetString();
+        IObstacleBuilder builder;
+
+        if (type == "Penetratable")
         {
-            _obstacle.X = x;
-            _obstacle.Y = y;
-            return this;
+            builder = _factory.CreatePenetratableBuilder();
+        }
+        else if (type == "Unpenetratable")
+        {
+            builder = _factory.CreateUnpenetratableBuilder();
+        }
+        else
+        {
+            throw new ArgumentException("Unknown obstacle type");
         }
 
-        public IObstacleBuilder SetSize(int width, int height)
-        {
-            _obstacle.Width = width;
-            _obstacle.Height = height;
-            return this;
-        }
+        int x = jsonObject.GetProperty("X").GetInt32();
+        int y = jsonObject.GetProperty("Y").GetInt32();
+        int width = jsonObject.GetProperty("Width").GetInt32();
+        int height = jsonObject.GetProperty("Height").GetInt32();
 
-        public Obstacle Build()
-        {
-            _obstacle.Type = "Unpenetratable";
-            return _obstacle;
-        }
+        return builder.SetPosition(x, y)
+                      .SetSize(width, height)
+                      .Build();
     }
 
-    public class ObstacleFactory
+    public override void Write(Utf8JsonWriter writer, Obstacle value, JsonSerializerOptions options)
     {
-        public IObstacleBuilder CreatePenetratableBuilder()
-        {
-            //grazinti obstacle, o ne obstacle builder.
-            return new PenetratableObstacleBuilder();
-        }
-
-        public IObstacleBuilder CreateUnpenetratableBuilder()
-        {
-            return new UnpenetratableObstacleBuilder();
-        }
+        writer.WriteStartObject();
+        writer.WriteNumber("X", value.X);
+        writer.WriteNumber("Y", value.Y);
+        writer.WriteNumber("Width", value.Width);
+        writer.WriteNumber("Height", value.Height);
+        writer.WriteString("Type", value.Type);
+        writer.WriteEndObject();
     }
+}
 
-    // JSON converter for Obstacles
-    public class ObstacleConverter : JsonConverter<Obstacle>
-    {
-        private readonly ObstacleFactory _factory = new ObstacleFactory();
-
-        public override Obstacle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var jsonDocument = JsonDocument.ParseValue(ref reader);
-            var jsonObject = jsonDocument.RootElement;
-
-            var type = jsonObject.GetProperty("Type").GetString();
-            IObstacleBuilder builder;
-
-            if (type == "Penetratable")
-            {
-                builder = _factory.CreatePenetratableBuilder();
+public class DeserializerObstacles
+{
+    private static readonly JsonSerializerOptions jsonSerializerOptions = 
+        new()
+	    {
+	    	Converters = 
+            { 
+                new ObstacleConverter() 
             }
-            else if (type == "Unpenetratable")
-            {
-                builder = _factory.CreateUnpenetratableBuilder();
-            }
-            else
-            {
-                throw new ArgumentException("Unknown obstacle type");
-            }
+	    };
 
-            int x = jsonObject.GetProperty("X").GetInt32();
-            int y = jsonObject.GetProperty("Y").GetInt32();
-            int width = jsonObject.GetProperty("Width").GetInt32();
-            int height = jsonObject.GetProperty("Height").GetInt32();
-
-            return builder.SetPosition(x, y)
-                          .SetSize(width, height)
-                          .Build();
-        }
-
-        public override void Write(Utf8JsonWriter writer, Obstacle value, JsonSerializerOptions options)
-        {
-            writer.WriteStartObject();
-            writer.WriteNumber("X", value.X);
-            writer.WriteNumber("Y", value.Y);
-            writer.WriteNumber("Width", value.Width);
-            writer.WriteNumber("Height", value.Height);
-            writer.WriteString("Type", value.Type);
-            writer.WriteEndObject();
-        }
-    }
-
-    public class DeserializerObstacles
+	public static List<Obstacle> DeserializeObstacles(string json)
     {
-        public static List<Obstacle> DeserializeObstacles(string json)
-        {
-            var options = new JsonSerializerOptions
-            {
-                Converters = { new ObstacleConverter() }
-            };
-            return JsonSerializer.Deserialize<List<Obstacle>>(json, options);
-        }
+        return JsonSerializer.Deserialize<List<Obstacle>>(json, jsonSerializerOptions);
     }
 }

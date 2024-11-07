@@ -1,6 +1,6 @@
 ﻿namespace Shared;
 
-public class Player
+public class Player : IRenderable
 {
 	public required int Id { get; set; }
 	public required int X { get; set; }

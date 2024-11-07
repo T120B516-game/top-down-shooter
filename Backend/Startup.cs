@@ -1,5 +1,6 @@
 ﻿using Backend.BehavioralPatterns;
 using Backend.Hubs;
+using System.Net;
 
 namespace Backend;
 
@@ -10,6 +11,12 @@ public class Startup
 	public async Task StartAsync()
 	{
 		var builder = WebApplication.CreateBuilder();
+
+		builder.WebHost.ConfigureKestrel((context, serverOptions) =>
+		{
+			serverOptions.Listen(IPAddress.Loopback, 5270);
+		});
+
 		ConfigureServices(builder.Services);
 
 		var app = builder.Build();
