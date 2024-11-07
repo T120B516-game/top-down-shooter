@@ -29,7 +29,7 @@ public abstract class Enemy : IClonable<Enemy>, IRenderable
 		MovementBehaviour.Move(this, players);
 	}
 
-	public abstract void SetMovementBehaviour();
+	public abstract void SetMovementBehaviour(IMovementBehaviour movementBehaviour);
 
 	virtual public Enemy DeepClone()
 	{
@@ -58,7 +58,12 @@ public abstract class Enemy : IClonable<Enemy>, IRenderable
 				throw new ArgumentException("Unknown enemy type");
 		}
 		enemyClone.Image = this.Image;
-		// IMovementBehaviour MovementBehaviour = this.MovementBehaviour;
+
+		if (this.MovementBehaviour is SimpleMovement)
+			enemyClone.SetMovementBehaviour(new SimpleMovement());
+		else if(this.MovementBehaviour is AdvancedMovement)
+			enemyClone.SetMovementBehaviour(new AdvancedMovement());
+
 		return enemyClone;
 	}
 
@@ -110,10 +115,10 @@ public class MobileExplosiveEnemy : Enemy
 		this.Speed = 20;
 	}
 
-	public override void SetMovementBehaviour()
+	public override void SetMovementBehaviour(IMovementBehaviour movementBehaviour)
 	{
-            MovementBehaviour = new AdvancedMovement();
-        }
+		MovementBehaviour = movementBehaviour;
+    }
 }
 
 public class MobileShootingEnemy : Enemy
@@ -133,10 +138,10 @@ public class MobileShootingEnemy : Enemy
 		this.Speed = 20;
 	}
 
-	public override void SetMovementBehaviour()
+	public override void SetMovementBehaviour(IMovementBehaviour movementBehaviour)
 	{
-            MovementBehaviour = new AdvancedMovement();
-        }
+		MovementBehaviour = movementBehaviour;
+	}
 }
 
 public class MobileMeeleEnemy : Enemy
@@ -156,10 +161,10 @@ public class MobileMeeleEnemy : Enemy
 		this.Speed = 20;
 	}
 
-	public override void SetMovementBehaviour()
+	public override void SetMovementBehaviour(IMovementBehaviour movementBehaviour)
 	{
-            MovementBehaviour = new AdvancedMovement();
-        }
+		MovementBehaviour = movementBehaviour;
+	}
 }
 
 public class StationaryExplosiveEnemy : Enemy
@@ -177,10 +182,10 @@ public class StationaryExplosiveEnemy : Enemy
 		this.Image = ImagesDictionary["up"];
 	}
 
-	public override void SetMovementBehaviour()
+	public override void SetMovementBehaviour(IMovementBehaviour movementBehaviour)
 	{
-            MovementBehaviour = new SimpleMovement();
-        }
+		MovementBehaviour = movementBehaviour;
+	}
 }
 
 public class StationaryShootingEnemy : Enemy
@@ -198,10 +203,10 @@ public class StationaryShootingEnemy : Enemy
 		this.Image = ImagesDictionary["up"];
 	}
 
-	public override void SetMovementBehaviour()
+	public override void SetMovementBehaviour(IMovementBehaviour movementBehaviour)
 	{
-            MovementBehaviour = new SimpleMovement();
-        }
+		MovementBehaviour = movementBehaviour;
+	}
 }
 
 public class StationaryMeeleEnemy : Enemy
@@ -218,10 +223,10 @@ public class StationaryMeeleEnemy : Enemy
 		};
 		this.Image = ImagesDictionary["up"];
 	}
-	public override void SetMovementBehaviour()
+	public override void SetMovementBehaviour(IMovementBehaviour movementBehaviour)
 	{
-            MovementBehaviour = new SimpleMovement();
-        }
+		MovementBehaviour = movementBehaviour;
+	}
 }
 
 public class EnemyConverter : JsonConverter<Enemy>

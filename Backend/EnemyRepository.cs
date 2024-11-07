@@ -12,13 +12,13 @@ public class EnemyRepository
 	public EnemyRepository()
 	{
 		var mobileMeeleEnemy = _mobileEnemyFactory.CreateMeeleEnemy(200, 500, 100, 5);
-		mobileMeeleEnemy.SetMovementBehaviour();
+		mobileMeeleEnemy.SetMovementBehaviour(new AdvancedMovement());
 
 		var mobileShootingEnemy = _mobileEnemyFactory.CreateShootingEnemy(200, 700, 100, 6);
-		mobileShootingEnemy.SetMovementBehaviour();
+		mobileShootingEnemy.SetMovementBehaviour(new SimpleMovement());
 
 		var stationaryShootingEnemy = _stationaryEnemyFactory.CreateShootingEnemy(300, 550, 100, 7);
-		stationaryShootingEnemy.SetMovementBehaviour();
+		stationaryShootingEnemy.SetMovementBehaviour(new AdvancedMovement());
 		
 		_enemies.Add(mobileMeeleEnemy);
 		_enemies.Add(mobileShootingEnemy);
@@ -26,8 +26,7 @@ public class EnemyRepository
 		_enemies.Add(mobileShootingEnemy);
 		_enemies.Add(stationaryShootingEnemy);
 
-		var clonedEnemy = mobileMeeleEnemy.ShallowClone();
-		clonedEnemy.SetMovementBehaviour();
+		var clonedEnemy = mobileMeeleEnemy.DeepClone();
 
 		_enemies.Add(clonedEnemy);
 	}

@@ -13,17 +13,10 @@ namespace Backend
         {
             var factory = new ObstacleFactory();
 
-            //var penetratable = factory.CreateObstacle()
-            //    .SetPosition(500, 100)
-            //    .SetSize(50, 50)
-            //    .SetType("Penetratable")
-            //    .Build();
-            //Obstacles.Add(penetratable);
+            var penetratable = factory.CreatePenetratable(500, 500, 50, 50);
+           Obstacles.Add(penetratable);
 
-            var unpenetratable = factory.CreateUnpenetratableBuilder()
-                .SetPosition(300, 300)
-                .SetSize(50, 50)
-                .Build();
+            var unpenetratable = factory.CreateUnpenetratable(300, 300, 50, 50);
             Obstacles.Add(unpenetratable);
         }
     }

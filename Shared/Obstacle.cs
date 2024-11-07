@@ -90,15 +90,20 @@ public class UnpenetratableObstacleBuilder : IObstacleBuilder
 
 public class ObstacleFactory
 {
-    public IObstacleBuilder CreatePenetratableBuilder()
+    public Obstacle CreatePenetratable(int X, int Y, int sizeX, int sizeY)
     {
-        //grazinti obstacle, o ne obstacle builder.
-        return new PenetratableObstacleBuilder();
-    }
+        var builder = new PenetratableObstacleBuilder();
+		return builder.SetPosition(X, Y)
+			    .SetSize(sizeX, sizeY)
+			    .Build();
+	}
 
-    public IObstacleBuilder CreateUnpenetratableBuilder()
+	public Obstacle CreateUnpenetratable(int X, int Y, int sizeX, int sizeY)
     {
-        return new UnpenetratableObstacleBuilder();
+		var builder = new UnpenetratableObstacleBuilder();
+		return builder.SetPosition(X, Y)
+				.SetSize(sizeX, sizeY)
+				.Build();
     }
 }
 
@@ -113,29 +118,24 @@ public class ObstacleConverter : JsonConverter<Obstacle>
         var jsonObject = jsonDocument.RootElement;
 
         var type = jsonObject.GetProperty("Type").GetString();
-        IObstacleBuilder builder;
 
-        if (type == "Penetratable")
+		int x = jsonObject.GetProperty("X").GetInt32();
+		int y = jsonObject.GetProperty("Y").GetInt32();
+		int width = jsonObject.GetProperty("Width").GetInt32();
+		int height = jsonObject.GetProperty("Height").GetInt32();
+
+		if (type == "Penetratable")
         {
-            builder = _factory.CreatePenetratableBuilder();
+            return _factory.CreatePenetratable(x, y, width, height);
         }
         else if (type == "Unpenetratable")
         {
-            builder = _factory.CreateUnpenetratableBuilder();
-        }
+			return _factory.CreateUnpenetratable(x, y, width, height);
+		}
         else
         {
             throw new ArgumentException("Unknown obstacle type");
         }
-
-        int x = jsonObject.GetProperty("X").GetInt32();
-        int y = jsonObject.GetProperty("Y").GetInt32();
-        int width = jsonObject.GetProperty("Width").GetInt32();
-        int height = jsonObject.GetProperty("Height").GetInt32();
-
-        return builder.SetPosition(x, y)
-                      .SetSize(width, height)
-                      .Build();
     }
 
     public override void Write(Utf8JsonWriter writer, Obstacle value, JsonSerializerOptions options)
