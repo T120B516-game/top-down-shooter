@@ -7,27 +7,26 @@ namespace Client;
 
 public partial class Form1 : Form
 {
-	private IHubClient? _mainHubClient;
-	private MovementHandler _movementHandler = new();
+    private IHubClient? _mainHubClient;
+    private MovementHandler _movementHandler = new();
     private List<Obstacle> _obstacles = new List<Obstacle>();
 
     public Form1()
 	{
 		InitializeComponent();
-        this.DoubleBuffered = true;
-        this.KeyDown += new KeyEventHandler(OnKeyDown);
+		this.KeyDown += new KeyEventHandler(OnKeyDown);
 		this.KeyUp += new KeyEventHandler(OnKeyUp);
         this.Paint += new PaintEventHandler(OnPaint);
     }
 
-	private async void Form1_Load(object sender, EventArgs e)
-	{
-		_mainHubClient = await MainHubClient.GetClientAsync();
+    private async void Form1_Load(object sender, EventArgs e)
+    {
+        _mainHubClient = await MainHubClient.GetClientAsync();
 
 		_mainHubClient.Connection.On<string?, string?>("ReceiveGameUpdate", (playerUpdateResponseJson, enemiesUpdateResponseJson) =>
 		{
 			Invoke(() => OnReceiveGameUpdate(playerUpdateResponseJson, enemiesUpdateResponseJson));
-        });
+		});
 		_mainHubClient.Connection.On<int>("ReceivePersonalId", id =>
 		{
 			Globals.PersonalID = id;
@@ -40,9 +39,8 @@ public partial class Form1 : Form
             Invalidate();
         });
 
-
-		await _mainHubClient.Connection.SendAsync("CreatePlayer");
-	}
+        await _mainHubClient.Connection.SendAsync("CreatePlayer");
+    }
 
     private void OnPaint(object sender, PaintEventArgs e)
     {
@@ -55,118 +53,99 @@ public partial class Form1 : Form
     }
 
     private void OnReceiveGameUpdate(string PlayersJson, string EnemiesJson)
-	{
-		var players = JsonConvert.DeserializeObject<List<Player>>(PlayersJson);
+    {
+        var players = JsonConvert.DeserializeObject<List<Player>>(PlayersJson);
 
-        foreach (var player in players)
-        {
-            PictureBox? playerPicture = null;
-
-            // Check if a PictureBox for this player already exists
-            foreach (Control control in this.Controls)
-            {
-                if (control is PictureBox box && (int)control.Tag == player.Id)
-                {
-                    playerPicture = box;
-                    break;
-                }
-            }
-
-            // If PictureBox doesn't exist, create and add it
-            if (playerPicture == null)
-            {
-                playerPicture = new PictureBox
-                {
-                    Tag = player.Id,
-                    SizeMode = PictureBoxSizeMode.AutoSize
-                };
-                this.Controls.Add(playerPicture);
-            }
-
-            // Set player position and image (updated each time)
-            playerPicture.Left = player.X;
-            playerPicture.Top = player.Y;
-            playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
-
-            // Adapt the player to PlayerComponent and apply decorators
-            PlayerComponent playerComponent = new PlayerAdapter(player);
-
-            // Apply decorators conditionally
-            if (player.Health < 50)
-            {
-                playerComponent = new HudDecorator(playerComponent, player.Health);
-            }
-
-            playerComponent = new AppearanceDecorator(playerComponent, Color.Green);  // Example of appearance decorator
-
-            // Use the decorated player component to draw (optional: graphics can be on a canvas or form as needed)
-            using (Graphics g = this.CreateGraphics())
-            {
-                playerComponent.Draw(g);
-            }
-        }
-
-        // Will optimize overlaping code in the future... maybe
-        var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
-		foreach (var enemy in enemies)
+		foreach (var player in players)
 		{
-			PictureBox enemyPicture = null;
+			PictureBox playerPicture = null;
 
 			foreach (Control control in this.Controls)
 			{
-				if (control is PictureBox box && (int)control.Tag == enemy.Id)
+				if (control is PictureBox box && (int)control.Tag == player.Id)
 				{
-					enemyPicture = box;
-					enemyPicture.Left = enemy.X;
-					enemyPicture.Top = enemy.Y;
-					enemyPicture.SizeMode = PictureBoxSizeMode.AutoSize;
-					enemyPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(enemy.Image);
+					playerPicture = box;
+					playerPicture.Left = player.X;
+					playerPicture.Top = player.Y;
+					playerPicture.SizeMode = PictureBoxSizeMode.AutoSize;
+					playerPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image);
 					break;
 				}
 			}
 
-			if (enemyPicture == null)
+			if (playerPicture == null)
 			{
-				enemyPicture = new PictureBox
+				playerPicture = new PictureBox
 				{
-					Tag = enemy.Id,
-					Left = enemy.X,
-					Top = enemy.Y,
-					Image = (Bitmap)Sprites.ResourceManager.GetObject(enemy.Image),
+					Tag = player.Id,
+					Left = player.X,
+					Top = player.Y,
+					Image = (Bitmap)Sprites.ResourceManager.GetObject(player.Image),
 					SizeMode = PictureBoxSizeMode.AutoSize
 				};
-				this.Controls.Add(enemyPicture);
+				this.Controls.Add(playerPicture);
 			}
 		}
 
-        Invalidate();
+		// Will optimize overlaping code in the future... maybe
+		var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);
+		foreach (var enemy in enemies)
+		{
+			PictureBox enemyPicture = null;
 
+            foreach (Control control in this.Controls)
+            {
+                if (control is PictureBox box && (int)control.Tag == enemy.Id)
+                {
+                    enemyPicture = box;
+                    enemyPicture.Left = enemy.X;
+                    enemyPicture.Top = enemy.Y;
+                    enemyPicture.SizeMode = PictureBoxSizeMode.AutoSize;
+                    enemyPicture.Image = (Bitmap)Sprites.ResourceManager.GetObject(enemy.Image);
+                    break;
+                }
+            }
+
+            if (enemyPicture == null)
+            {
+                enemyPicture = new PictureBox
+                {
+                    Tag = enemy.Id,
+                    Left = enemy.X,
+                    Top = enemy.Y,
+                    Image = (Bitmap)Sprites.ResourceManager.GetObject(enemy.Image),
+                    SizeMode = PictureBoxSizeMode.AutoSize
+                };
+                this.Controls.Add(enemyPicture);
+            }
+        }
+
+	}
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        _movementHandler.ConsumeKeyEvent(e, KeyEventType.KeyDown);
     }
 
-	private void OnKeyDown(object sender, KeyEventArgs e)
-	{
-		_movementHandler.ConsumeKeyEvent(e, KeyEventType.KeyDown);
-	}
+    private void OnKeyUp(object sender, KeyEventArgs e)
+    {
+        _movementHandler.ConsumeKeyEvent(e, KeyEventType.KeyUp);
+    }
 
-	private void OnKeyUp(object sender, KeyEventArgs e)
-	{
-		_movementHandler.ConsumeKeyEvent(e, KeyEventType.KeyUp);
-	}
-
-	private void label1_Click(object sender, EventArgs e) { }
+    private void label1_Click(object sender, EventArgs e) { }
 
 
-	/// <summary>
-	/// Repeats every set GameTimer interval (the interval is set from the Form1 design screen)
-	/// Mainly used for sending updates to the server about player actions
-	/// </summary>
-	private void GameTimer_Tick(object sender, EventArgs e)
-	{
-		if (_mainHubClient == null)
-		{
-			return;
-		}
+    /// <summary>
+    /// Repeats every set GameTimer interval (the interval is set from the Form1 design screen)
+    /// Mainly used for sending updates to the server about player actions
+    /// </summary>
+    private void GameTimer_Tick(object sender, EventArgs e)
+    {
+        if (_mainHubClient == null)
+        {
+            return;
+        }
 
-		_ = _movementHandler.SendAsync(_mainHubClient.Connection);
-	}
+        _ = _movementHandler.SendAsync(_mainHubClient.Connection);
+    }
 }
