@@ -2,8 +2,12 @@
 
 public class InputPublisher
 {
+
 	private readonly List<IInputObserver> _observers = [];
 	private readonly Queue<InputEvent> _inputEvents = [];
+
+	public int ActiveObserversCount => _observers.Count;
+	public int AvailableEventsCount => _inputEvents.Count;
 
 	public void AddObserver(IInputObserver observer) =>
 		_observers.Add(observer);

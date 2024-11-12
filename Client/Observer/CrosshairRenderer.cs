@@ -4,8 +4,8 @@ namespace Client.Observer;
 
 public class CrosshairRenderer : IInputObserver, IUpdateable
 {
-	private Point _nextLocation = new(0, 0);
-	private PictureBox _crosshair;
+	public Point NextLocation { get; private set; } = new(0, 0);
+	private PictureBox? _crosshair;
 
 	public void Init(ControlCollection controls)
 	{
@@ -31,14 +31,17 @@ public class CrosshairRenderer : IInputObserver, IUpdateable
 			return;
 		};
 
-		var x = mouseEvent.Location.X - (_crosshair.Width / 2);
-		var y = mouseEvent.Location.Y - (_crosshair.Height / 2);
-		_nextLocation = new Point(x, y);
+		var x = mouseEvent.Location.X - ((_crosshair?.Width).GetValueOrDefault() / 2);
+		var y = mouseEvent.Location.Y - ((_crosshair?.Height).GetValueOrDefault() / 2);
+		NextLocation = new Point(x, y);
 	}
 
 	public void Update()
 	{
-		_crosshair.Location = _nextLocation;
-		_crosshair.Invalidate();
+		if (_crosshair != null)
+		{
+			_crosshair.Location = NextLocation;
+			_crosshair.Invalidate();
+		}
 	}
 }
