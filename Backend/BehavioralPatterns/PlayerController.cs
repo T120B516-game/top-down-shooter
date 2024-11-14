@@ -67,7 +67,7 @@ namespace Backend.BehavioralPatterns
 		}
 	}
 
-	interface ICommand
+	public interface ICommand
 	{
 		void Move();
 		void Undo();
