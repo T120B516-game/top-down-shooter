@@ -4,23 +4,26 @@ namespace Client.Observer;
 
 public class PauseHandler : IInputObserver
 {
-	private ControlCollection _controls;
 	private PictureBox _pause;
 
 	public bool IsPaused { get; private set; } = false;
 
 	public void Init(ControlCollection controls)
 	{
-		_controls = controls;
-
 		_pause = new PictureBox()
 		{
 			Tag = "pause",
 			Anchor = AnchorStyles.None,
 			SizeMode = PictureBoxSizeMode.AutoSize,
-			Image = (Bitmap)Sprites.ResourceManager.GetObject("pause"),
 		};
-		_controls.Add(_pause);
+
+		try
+		{
+			_pause.Image = (Bitmap)Sprites.ResourceManager.GetObject("pause");
+		}
+		catch { }
+
+		controls.Add(_pause);
 
 		_pause.Hide();
 	}

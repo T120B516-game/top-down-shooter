@@ -1,10 +1,23 @@
 ﻿using Client.Observer;
 using System.Drawing;
+using System.Windows.Forms;
+using static System.Windows.Forms.Control;
 
 namespace Tests.Observer;
 
 public class CrosshairRendererTests
 {
+	[Fact]
+	public void Should_Initialize()
+	{
+		var crosshair = new CrosshairRenderer();
+		
+		var randomControl = new Button();
+		var controls = new ControlCollection(randomControl);
+
+		crosshair.Init(controls);
+	}
+
 	[Fact]
 	public void Should_Handle_Empty_InputUpdate()
 	{

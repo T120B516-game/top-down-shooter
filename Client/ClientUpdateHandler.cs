@@ -6,7 +6,7 @@ namespace Client;
 // Facade
 public class ClientUpdateHandler
 {
-	private readonly IHubClient _mainHubClient;
+	private readonly INetworkHandler _networkHandler;
 	private readonly ContainerControl _containerControl;
 
 	private readonly InputPublisher _inputPublisher = new();
@@ -16,10 +16,10 @@ public class ClientUpdateHandler
 
 	private readonly List<object> _components = [];
 
-	public ClientUpdateHandler(ContainerControl containerControl, IHubClient mainHubClient)
+	public ClientUpdateHandler(ContainerControl containerControl, INetworkHandler networkHandler)
 	{
 		_containerControl = containerControl;
-		_mainHubClient = mainHubClient;
+		_networkHandler = networkHandler;
 
 		_inputPublisher.AddObserver(_movementHandler);
 		_inputPublisher.AddObserver(_crosshairRenderer);
@@ -61,27 +61,27 @@ public class ClientUpdateHandler
 		}
 	}
 
-	private void HandleInput(InputEvent inputEvent)
+	/// <summary> Public only for testing. </summary>
+	public void HandleInput(InputEvent inputEvent)
 	{
 		_inputPublisher.AddInputEvent(inputEvent);
 		_inputPublisher.NotifyObservers();
 	}
 
-	public async Task UpdateAsync()
+	public async Task<bool> UpdateAsync()
 	{
 		if (_pauseHandler.IsPaused)
 		{
-			return;
+			return false;
 		}
 
-		foreach (var sendable in _components.OfType<ISendable>())
-		{
-			await sendable.SendAsync(_mainHubClient.Connection);
-		}
+		await _movementHandler.SendAsync(_networkHandler);
 
 		foreach (var updateable in _components.OfType<IUpdateable>())
 		{
 			updateable.Update();
 		}
+
+		return true;
 	}
 }

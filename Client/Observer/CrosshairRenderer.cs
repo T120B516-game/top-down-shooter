@@ -16,8 +16,13 @@ public class CrosshairRenderer : IInputObserver, IUpdateable
 			Top = 0,
 			Width = 24,
 			Height = 24,
-			Image = (Bitmap)Sprites.ResourceManager.GetObject("crosshair"),
 		};
+
+		try
+		{
+			_crosshair.Image = (Bitmap)Sprites.ResourceManager.GetObject("crosshair")!;
+		}
+		catch { }
 
 		Cursor.Hide();
 		controls.Add(_crosshair);

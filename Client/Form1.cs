@@ -25,7 +25,7 @@ public partial class Form1 : Form, IMessageFilter
 	{
 		_mainHubClient = await MainHubClient.GetClientAsync();
 
-		_updateHandler = new(this, _mainHubClient);
+		_updateHandler = new(this, new NetworkHandler(_mainHubClient.Connection));
 		KeyDown += _updateHandler.OnKeyDown;
 		KeyUp += _updateHandler.OnKeyUp;
 
