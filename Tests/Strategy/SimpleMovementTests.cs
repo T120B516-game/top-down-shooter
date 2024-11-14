@@ -7,7 +7,8 @@ public class SimpleMovementTests
     [Fact]
     public void SimpleMovement_ShouldMoveEnemy_RandomlyWithinBounds()
     {
-        var enemy = new Enemy(5, 5, 100, 1) { MovementBehaviour = new SimpleMovement() };
+        var enemy = new MobileExplosiveEnemy(5, 5, 100, 1);
+        enemy.SetMovementBehaviour(new AdvancedMovement());
         var initialX = enemy.X;
         var initialY = enemy.Y;
         
