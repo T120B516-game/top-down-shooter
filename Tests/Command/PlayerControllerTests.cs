@@ -139,5 +139,41 @@ namespace Tests.Command
 			Assert.Equal(initialX, stubPlayer.X);
 			Assert.Equal(initialY, stubPlayer.Y);
 		}
+
+		[Fact]
+		public void Undo_BufferOverflow_RemoveFirst()
+		{
+			PlayerController controller = new PlayerController();
+			var stubPlayer = new Player()
+			{
+				Id = 0,
+				X = 200,
+				Y = 200,
+				Image = "PlayerRight",
+				Health = 40,
+				Speed = 10,
+			};
+
+			int initialX = stubPlayer.X;
+			int initialY = stubPlayer.Y + stubPlayer.Speed * 4;
+
+			for (int i = 0; i < 49; i++)
+			{
+				controller.MoveDown(stubPlayer);
+			}
+
+			controller.MoveUp(stubPlayer);
+			controller.MoveDown(stubPlayer);
+			controller.MoveLeft(stubPlayer);
+			controller.MoveRight(stubPlayer);
+
+			for (int i = 0; i < 60; i++)
+			{
+				controller.Undo();
+			}
+
+			Assert.Equal(initialX, stubPlayer.X);
+			Assert.Equal(initialY, stubPlayer.Y);
+		}
 	}
 }
