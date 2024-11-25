@@ -1,4 +1,5 @@
 ﻿using Backend.CreationalPatterns;
+using Backend.Iterator;
 using Shared;
 
 namespace Backend;
@@ -6,6 +7,7 @@ namespace Backend;
 public class EnemyRepository
 {
 	private readonly List<Enemy> _enemies = [];
+	private readonly EnemyIteratorRepository _enemyIteratorRepository = new EnemyIteratorRepository("list");
 	private readonly EnemyAbstractFactory _stationaryEnemyFactory = new StationaryEnemyFactory();
 	private readonly EnemyAbstractFactory _mobileEnemyFactory = new MobileEnemyFactory();
 
@@ -20,19 +22,27 @@ public class EnemyRepository
 		var stationaryShootingEnemy = _stationaryEnemyFactory.CreateShootingEnemy(300, 550, 100, 7);
 		stationaryShootingEnemy.SetMovementBehaviour(new AdvancedMovement());
 		
-		_enemies.Add(mobileMeeleEnemy);
-		_enemies.Add(mobileShootingEnemy);
-		_enemies.Add(stationaryShootingEnemy);
-		_enemies.Add(mobileShootingEnemy);
-		_enemies.Add(stationaryShootingEnemy);
+		_enemyIteratorRepository.Add(mobileMeeleEnemy);
+		_enemyIteratorRepository.Add(stationaryShootingEnemy);
+		_enemyIteratorRepository.Add(mobileShootingEnemy);
+		_enemyIteratorRepository.Add(stationaryShootingEnemy);
+        _enemyIteratorRepository.Add(mobileShootingEnemy);
 
 		var clonedEnemy = mobileMeeleEnemy.DeepClone();
 
-		_enemies.Add(clonedEnemy);
+		_enemyIteratorRepository.Add(clonedEnemy);
 	}
 
-	public async Task<List<Enemy>> ListAsync()
-	{
-		return _enemies;
-	}
+    public async Task<List<Enemy>> ListAsync()
+    {
+        var iterator = _enemyIteratorRepository.GetIterator();
+        var enemyList = new List<Enemy>();
+
+        while (iterator.HasNext())
+        {
+            enemyList.Add(iterator.Next());
+        }
+
+        return await Task.FromResult(enemyList);
+    }
 }
