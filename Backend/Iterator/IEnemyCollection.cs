@@ -6,7 +6,8 @@ namespace Backend.Iterator
     {
         void Add(Enemy enemy);
         void Remove(Enemy enemy);
-        IIterator<Enemy> GetIterator();
+        bool HasNext();
+        Enemy Next();
     }
 
 }

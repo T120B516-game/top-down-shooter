@@ -1,41 +1,43 @@
 ﻿using Backend.BehavioralPatterns;
 using Backend.Hubs;
+using Shared;
 using System.Net;
 
 namespace Backend;
 
 public class Startup
 {
-	public Startup() { }
+    public Startup() { }
 
-	public async Task StartAsync()
-	{
-		var builder = WebApplication.CreateBuilder();
+    public async Task StartAsync()
+    {
+        var builder = WebApplication.CreateBuilder();
 
-		builder.WebHost.ConfigureKestrel((context, serverOptions) =>
-		{
-			serverOptions.Listen(IPAddress.Loopback, 5270);
-		});
+        builder.WebHost.ConfigureKestrel((context, serverOptions) =>
+        {
+            serverOptions.Listen(IPAddress.Loopback, 5270);
+        });
 
-		ConfigureServices(builder.Services);
+        ConfigureServices(builder.Services);
 
-		var app = builder.Build();
-		ConfigureMiddlewares(app);
+        var app = builder.Build();
+        ConfigureMiddlewares(app);
 
-		await app.RunAsync();
-	}
+        await app.RunAsync();
+    }
 
-	private static void ConfigureServices(IServiceCollection services)
-	{
-		services.AddSignalR();
-		services.AddSingleton<PlayerRepository>();
-		services.AddSingleton<EnemyRepository>();
-		services.AddSingleton<GameUpdater>();
-		services.AddSingleton<PlayerController>();
-	}
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSignalR();
+        services.AddSingleton<PlayerRepository>();
+        services.AddSingleton<EnemyRepository>();
+        services.AddSingleton<ObstacleRepository>();
+        services.AddSingleton<GameUpdater>();
+        services.AddSingleton<PlayerController>();
+    }
 
-	private static void ConfigureMiddlewares(WebApplication app)
-	{
-		app.MapHub<MainHub>("/hubs:main");
-	}
+    private static void ConfigureMiddlewares(WebApplication app)
+    {
+        app.MapHub<MainHub>("/hubs:main");
+    }
 }

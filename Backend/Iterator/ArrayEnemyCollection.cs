@@ -4,8 +4,14 @@ namespace Backend.Iterator
 {
     public class ArrayEnemyCollection : IEnemyCollection
     {
-        private readonly Enemy[] _enemies = new Enemy[10];
+        private readonly Enemy[] _enemies;
         private int _currentIndex;
+
+        public ArrayEnemyCollection()
+        {
+            _enemies = new Enemy[10];
+            _currentIndex = 0;
+        }
 
         public void Add(Enemy enemy)
         {
@@ -36,9 +42,17 @@ namespace Backend.Iterator
             }
         }
 
-        public IIterator<Enemy> GetIterator()
+        public bool HasNext()
         {
-            return new ArrayIterator(_enemies);
+            return _currentIndex < _enemies.Length && _enemies[_currentIndex] != null;
+        }
+
+        public Enemy Next()
+        {
+            if (!HasNext())
+                throw new InvalidOperationException("No more elements.");
+
+            return _enemies[_currentIndex++];
         }
     }
 
