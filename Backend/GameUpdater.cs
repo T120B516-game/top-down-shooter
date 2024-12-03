@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Backend.ChainOfResponsibility;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
 
@@ -9,29 +10,43 @@ namespace Backend;
 /// </summary>
 public class GameUpdater
 {
-	private readonly PlayerRepository _playerRepository;
+    private readonly PlayerRepository _playerRepository;
     private readonly EnemyRepository _enemyRepository;
+    private readonly ILoggerHandler _loggerChain;
 
     private IHubCallerClients? _clients = null;
-	private Task _broadcastingTask;
+    private Task _broadcastingTask;
     private bool _shouldUpdateObstacles = true;
 
     public GameUpdater(PlayerRepository playerRepository, EnemyRepository enemyRepository)
-	{
-		_playerRepository = playerRepository;
+    {
+        _playerRepository = playerRepository;
         _enemyRepository = enemyRepository;
-	}
 
-	/// <summary>
-	/// Once this function is called, BroadcastGameUpdate starts getting invoked repeatedly (every _updateInterval), broadcasting the game data to all clients
-	/// </summary>
-	public void Start(IHubCallerClients hubContext)
-	{
-		if (_clients is not null) return;
-		_clients = hubContext;
+        if (!Directory.Exists("logs"))
+        {
+            Directory.CreateDirectory("logs");
+        }
 
-		_broadcastingTask = LoopBroadcastAsync();
-	}
+        // Set up the logger chain
+        var consoleLogger = new ConsoleLogger();
+        var xmlLogger = new XmlLogger("logs/xmlLog.txt", consoleLogger);
+        var jsonLogger = new JsonLogger("logs/jsonLog.txt", xmlLogger);
+        var textLogger = new TextLogger("logs/textLog.txt", jsonLogger);
+
+        _loggerChain = textLogger; // Starting point of the chain
+    }
+
+    /// <summary>
+    /// Once this function is called, BroadcastGameUpdate starts getting invoked repeatedly (every _updateInterval), broadcasting the game data to all clients
+    /// </summary>
+    public void Start(IHubCallerClients hubContext)
+    {
+        if (_clients is not null) return;
+        _clients = hubContext;
+
+        _broadcastingTask = LoopBroadcastAsync();
+    }
 
     private async Task LoopBroadcastAsync()
     {
@@ -41,6 +56,10 @@ public class GameUpdater
         {
             var players = await _playerRepository.ListAsync();
             var enemies = await _enemyRepository.ListAsync();
+
+            // Log data
+            //var logMessage = $"Players: {players.Count}, Enemies: {enemies.Count}";
+            //_loggerChain.Log(logMessage);
 
             var enemiesJson = JsonConvert.SerializeObject(enemies);
             var playersJson = JsonConvert.SerializeObject(players);
