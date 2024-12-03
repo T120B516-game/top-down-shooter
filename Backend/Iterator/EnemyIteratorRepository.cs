@@ -17,19 +17,9 @@ namespace Backend.Iterator
             };
         }
 
-        public void Add(Enemy enemy)
+        public IEnemyCollection GetIterator()
         {
-            _enemyCollection.Add(enemy);
-        }
-
-        public void Remove(Enemy enemy)
-        {
-            _enemyCollection.Remove(enemy);
-        }
-
-        public IIterator<Enemy> GetIterator()
-        {
-            return _enemyCollection.GetIterator();
+            return _enemyCollection;
         }
     }
 }

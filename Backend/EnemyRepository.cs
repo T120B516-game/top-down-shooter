@@ -22,21 +22,22 @@ public class EnemyRepository
 		var stationaryShootingEnemy = _stationaryEnemyFactory.CreateShootingEnemy(300, 550, 100, 7);
 		stationaryShootingEnemy.SetMovementBehaviour(new AdvancedMovement());
 		
-		_enemyIteratorRepository.Add(mobileMeeleEnemy);
-		_enemyIteratorRepository.Add(stationaryShootingEnemy);
-		_enemyIteratorRepository.Add(mobileShootingEnemy);
-		_enemyIteratorRepository.Add(stationaryShootingEnemy);
-        _enemyIteratorRepository.Add(mobileShootingEnemy);
+		_enemyIteratorRepository.GetIterator().Add(mobileMeeleEnemy);
+		_enemyIteratorRepository.GetIterator().Add(stationaryShootingEnemy);
+		_enemyIteratorRepository.GetIterator().Add(mobileShootingEnemy);
+		_enemyIteratorRepository.GetIterator().Add(stationaryShootingEnemy);
+        _enemyIteratorRepository.GetIterator().Add(mobileShootingEnemy);
 
 		var clonedEnemy = mobileMeeleEnemy.DeepClone();
 
-		_enemyIteratorRepository.Add(clonedEnemy);
+		_enemyIteratorRepository.GetIterator().Add(clonedEnemy);
 	}
 
     public async Task<List<Enemy>> ListAsync()
     {
         var iterator = _enemyIteratorRepository.GetIterator();
         var enemyList = new List<Enemy>();
+		iterator.Start();
 
         while (iterator.HasNext())
         {

@@ -36,9 +36,22 @@ namespace Backend.Iterator
             }
         }
 
-        public IIterator<Enemy> GetIterator()
+        public bool HasNext()
         {
-            return new ArrayIterator(_enemies);
+            return _currentIndex < _enemies.Length && _enemies[_currentIndex] != null;
+        }
+
+        public void Start()
+        {
+            _currentIndex = 0;
+        }
+
+        public Enemy Next()
+        {
+            if (!HasNext())
+                return null;
+
+            return _enemies[_currentIndex++];
         }
     }
 

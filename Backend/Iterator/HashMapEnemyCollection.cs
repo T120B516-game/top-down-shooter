@@ -5,7 +5,13 @@ namespace Backend.Iterator
     public class HashMapEnemyCollection : IEnemyCollection
     {
         private readonly Dictionary<int, Enemy> _enemies = new();
+        private readonly IEnumerator<KeyValuePair<int, Enemy>> _enumerator;
         private int _keyCounter;
+
+        public HashMapEnemyCollection()
+        {
+            _enumerator = _enemies.GetEnumerator();
+        }
 
         public void Add(Enemy enemy)
         {
@@ -28,9 +34,19 @@ namespace Backend.Iterator
                 _enemies.Remove(keyToRemove);
         }
 
-        public IIterator<Enemy> GetIterator()
+        public bool HasNext()
         {
-            return new HashMapIterator(_enemies);
+            return _enumerator.MoveNext();
+        }
+
+        public void Start()
+        {
+            _enumerator.Reset();
+        }
+
+        public Enemy Next()
+        {
+            return _enumerator.Current.Value;
         }
     }
 
