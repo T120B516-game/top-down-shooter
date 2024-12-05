@@ -7,13 +7,17 @@ namespace Client;
 
 public partial class Form1 : Form, IMessageFilter
 {
+	public bool IsReady { get; set; }
+
+    public ClientUpdateHandler UpdateHandler { get; private set; }
     private IHubClient? _mainHubClient;
-    private ClientUpdateHandler _updateHandler;
 	private List<Obstacle> _obstacles = [];
     private ShootingHandler _shootingHandler = new ShootingHandler();
 
 	public Form1()
 	{
+		Globals.Form = this;
+
 		InitializeComponent();
 		Application.AddMessageFilter(this);
 		this.Paint += new PaintEventHandler(OnPaint);
@@ -21,13 +25,13 @@ public partial class Form1 : Form, IMessageFilter
         InitializeWeapon();
 	}
 
-	private async void Form1_Load(object sender, EventArgs e)
+	public async void Form1_Load(object sender, EventArgs e)
 	{
 		_mainHubClient = await MainHubClient.GetClientAsync();
 
-		_updateHandler = new(this, new NetworkHandler(_mainHubClient.Connection));
-		KeyDown += _updateHandler.OnKeyDown;
-		KeyUp += _updateHandler.OnKeyUp;
+		UpdateHandler = new(this, new NetworkHandler(_mainHubClient.Connection));
+		KeyDown += UpdateHandler.OnKeyDown;
+		KeyUp += UpdateHandler.OnKeyUp;
 
 		_mainHubClient.Connection.On<string?, string?>("ReceiveGameUpdate", (playerUpdateResponseJson, enemiesUpdateResponseJson) =>
 		{
@@ -45,7 +49,9 @@ public partial class Form1 : Form, IMessageFilter
 		});
 
         await _mainHubClient.Connection.SendAsync("CreatePlayer");
-    }
+
+		IsReady = true;
+	}
 
 	private void OnPaint(object sender, PaintEventArgs e)
 	{
@@ -107,7 +113,7 @@ public partial class Form1 : Form, IMessageFilter
 
 	public bool PreFilterMessage(ref Message m)
 	{
-		_updateHandler?.OnWindowsMessage(ref m);
+		UpdateHandler?.OnWindowsMessage(ref m);
 		return false;
 	}
 
@@ -118,5 +124,5 @@ public partial class Form1 : Form, IMessageFilter
 	/// Mainly used for sending updates to the server about player actions
 	/// </summary>
 	private void GameTimer_Tick(object sender, EventArgs e) =>
-		_ = _updateHandler?.UpdateAsync();
+		_ = UpdateHandler?.UpdateAsync();
 }

@@ -25,7 +25,7 @@ public class CrosshairRenderer : IInputObserver, IUpdateable
 		catch { }
 
 		Cursor.Hide();
-		controls.Add(_crosshair);
+		Globals.Form.Invoke(() => controls.Add(_crosshair));
 	}
 
 	public void Update(InputEvent input)

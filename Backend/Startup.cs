@@ -8,6 +8,9 @@ public class Startup
 {
 	public Startup() { }
 
+	public WebApplication Application { get; private set; }
+	public Task? RunningTask { get; private set; }
+
 	public async Task StartAsync()
 	{
 		var builder = WebApplication.CreateBuilder();
@@ -19,10 +22,11 @@ public class Startup
 
 		ConfigureServices(builder.Services);
 
-		var app = builder.Build();
-		ConfigureMiddlewares(app);
+		Application = builder.Build();
+		ConfigureMiddlewares(Application);
 
-		await app.RunAsync();
+		RunningTask = Application.RunAsync();
+		await RunningTask;
 	}
 
 	private static void ConfigureServices(IServiceCollection services)
