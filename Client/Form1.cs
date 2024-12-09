@@ -59,7 +59,7 @@ public partial class Form1 : Form, IMessageFilter
 
         foreach (var obstacle in _obstacles)
         {
-            obstacle.Draw(g);
+            obstacle.Draw(g, Globals.ColliderMap);
         }
     }
 
@@ -72,6 +72,11 @@ public partial class Form1 : Form, IMessageFilter
 	private void OnReceiveGameUpdate(string PlayersJson, string EnemiesJson)
 	{
 		var players = JsonConvert.DeserializeObject<List<Player>>(PlayersJson);
+
+		Player? thisPlayer = players.Where(p => p.Id == Globals.PersonalID).FirstOrDefault();
+		if(thisPlayer != null)
+			Globals.ThisPlayer.UpdatePlayer(thisPlayer);
+
 		players.ForEach(Render);
 
 		var enemies = DeserializeEnemies.DeserializeEnemy(EnemiesJson);

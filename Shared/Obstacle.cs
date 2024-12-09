@@ -12,23 +12,39 @@ public abstract class Obstacle
     public int Height { get; set; }
     public string Type { get; set; }
 
-    public abstract void Draw(Graphics g);
+    public abstract void Draw(Graphics g, int[,] ColliderMap);
 }
 
 public class Penetratable : Obstacle
 {
-    public override void Draw(Graphics g)
+    public override void Draw(Graphics g, int[,] ColliderMap)
     {
         g.FillRectangle(Brushes.Green, X, Y, Width, Height);
-    }
+
+        for (int x = this.X; x < this.X + this.Width; x++)
+        {
+	        for (int y = this.Y; y < this.Y + this.Height; y++)
+	        {
+		        ColliderMap[x, y] = 1;
+	        }
+        }
+	}
 }
 
 public class Unpenetratable : Obstacle
 {
-    public override void Draw(Graphics g)
+    public override void Draw(Graphics g, int[,] ColliderMap)
     {
         g.FillRectangle(Brushes.Red, X, Y, Width, Height);
-    }
+
+        for (int x = this.X; x < this.X + this.Width; x++)
+        {
+	        for (int y = this.Y; y < this.Y + this.Height; y++)
+	        {
+		        ColliderMap[x, y] = 2;
+	        }
+        }
+	}
 }
 
 public interface IObstacleBuilder

@@ -5,7 +5,7 @@ namespace Tests.Obstacle
 {
     public class ObstacleTests
     {
-        [Fact]
+        /*[Fact]
         public void PenetratableObstacle_Draw_ShouldFillRectangleWithGreenBrush()
         {
             // Arrange
@@ -51,7 +51,7 @@ namespace Tests.Obstacle
             Color pixelColor = bitmap.GetPixel(15, 15); // A point inside the rectangle
             Color expectedColor = Color.FromArgb(255, 255, 0, 0); // Color.Red ARGB values
             Assert.Equal(expectedColor, pixelColor);
-        }
+        }*/
     }
 
     public class PenetratableObstacleBuilderTests

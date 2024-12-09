@@ -48,11 +48,14 @@ public class MovementHandler : IInputObserver
 
 	public async Task SendAsync(INetworkHandler networkHandler)
 	{
+		PlayerAdapter player = Globals.ThisPlayer;
 		foreach (var (direction, isMoving) in _states)
 		{
 			if (isMoving)
 			{
-				await networkHandler.SendMovementAsync(direction, Globals.PersonalID);
+				player.UpdatePosition(direction);
+				if (!player.ProcessCollisions(null, null))
+					await networkHandler.SendMovementAsync(direction, Globals.PersonalID);
 			}
 		}
 	}
