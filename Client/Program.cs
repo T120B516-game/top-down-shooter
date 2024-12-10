@@ -60,7 +60,7 @@ namespace Client
                     if (int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
                     {
                         // Create a TeleportCommand and interpret it
-                        TeleportCommand teleportCommand = new TeleportCommand(x, y);
+                        TerminalExpression teleportCommand = new TerminalExpression(x, y);
                         teleportCommand.Interpret(context);
                     }
                     else

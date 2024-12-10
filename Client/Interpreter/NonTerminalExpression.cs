@@ -1,6 +1,6 @@
 ﻿namespace Client.Interpreter
 {
-    public class CommandSequence : AbstractExpression
+    public class NonTerminlExpression : AbstractExpression
     {
         private List<AbstractExpression> _commands = new List<AbstractExpression>();
 

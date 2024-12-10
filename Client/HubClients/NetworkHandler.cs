@@ -25,7 +25,6 @@ public class NetworkHandler : INetworkHandler
 
     public async Task SendTeleportAsync(int x, int y, int playerId)
     {
-        // Sends teleportation coordinates to the server
         await _hubConnection.SendAsync("teleportPlayer", x, y, playerId);
     }
 }
