@@ -10,7 +10,7 @@ namespace Shared
     {
         public void EnterState(Enemy enemy)
         {
-            Console.WriteLine($"{enemy.Id} entering Patrol state.");
+            //Console.WriteLine($"{enemy.Id} entering Patrol state.");
             enemy.SetMovementBehaviour(new SimpleMovement());
         }
 
@@ -29,7 +29,7 @@ namespace Shared
 
         public void ExitState(Enemy enemy)
         {
-            Console.WriteLine($"{enemy.Id} exiting Patrol state.");
+            //Console.WriteLine($"{enemy.Id} exiting Patrol state.");
         }
 
         private double CalculateDistance(Player player, Enemy enemy)

@@ -10,7 +10,7 @@ namespace Shared
     {
         public void EnterState(Enemy enemy)
         {
-            Console.WriteLine($"{enemy.Id} entering Attack state.");
+            //Console.WriteLine($"{enemy.Id} entering Attack state.");
         }
 
         public void UpdateState(Enemy enemy, List<Player> players)
@@ -26,7 +26,7 @@ namespace Shared
 
         public void ExitState(Enemy enemy)
         {
-            Console.WriteLine($"{enemy.Id} exiting Attack state.");
+            //Console.WriteLine($"{enemy.Id} exiting Attack state.");
         }
     }
 

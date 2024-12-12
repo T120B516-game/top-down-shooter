@@ -10,7 +10,7 @@ namespace Shared
     {
         public void EnterState(Enemy enemy)
         {
-            Console.WriteLine($"{enemy.Id} entering Chase state.");
+            //Console.WriteLine($"{enemy.Id} entering Chase state.");
             enemy.SetMovementBehaviour(new AdvancedMovement());
         }
 
@@ -29,7 +29,7 @@ namespace Shared
 
         public void ExitState(Enemy enemy)
         {
-            Console.WriteLine($"{enemy.Id} exiting Chase state.");
+           // Console.WriteLine($"{enemy.Id} exiting Chase state.");
         }
 
         private double CalculateDistance(Player player, Enemy enemy)

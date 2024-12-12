@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Shared;
 
-public abstract class Obstacle
+public abstract class Obstacle : IVisitable
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -13,6 +13,11 @@ public abstract class Obstacle
     public string Type { get; set; }
 
     public abstract void Draw(Graphics g, int[,] ColliderMap);
+
+    public void Accept(IInteractionVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
 }
 
 public class Penetratable : Obstacle
