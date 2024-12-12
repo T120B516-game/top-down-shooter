@@ -90,6 +90,7 @@ namespace Backend.BehavioralPatterns
 			previousImage = ControlTarget.Image;
 			previousPosition = ControlTarget.Y;
 			ControlTarget.Y -= ControlTarget.Speed;
+			ControlTarget.Direction = "up";
 			ControlTarget.Image = "PlayerUp";
 		}
 
@@ -119,6 +120,7 @@ namespace Backend.BehavioralPatterns
 			previousImage = ControlTarget.Image;
 			previousPosition = ControlTarget.Y;
 			ControlTarget.Y += ControlTarget.Speed;
+			ControlTarget.Direction = "down";
 			ControlTarget.Image = "PlayerDown";
 		}
 
@@ -148,6 +150,7 @@ namespace Backend.BehavioralPatterns
 			previousImage = ControlTarget.Image;
 			previousPosition = ControlTarget.X;
 			ControlTarget.X -= ControlTarget.Speed;
+			ControlTarget.Direction = "left";
 			ControlTarget.Image = "PlayerLeft";
 		}
 
@@ -177,6 +180,7 @@ namespace Backend.BehavioralPatterns
 			previousImage = ControlTarget.Image;
 			previousPosition = ControlTarget.X;
 			ControlTarget.X += ControlTarget.Speed;
+			ControlTarget.Direction = "right";
 			ControlTarget.Image = "PlayerRight";
 		}
 

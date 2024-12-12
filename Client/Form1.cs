@@ -21,6 +21,7 @@ public partial class Form1 : Form, IMessageFilter
         InitializeComponent();
         Application.AddMessageFilter(this);
         this.Paint += new PaintEventHandler(OnPaint);
+        this.KeyDown += KeyIsDown;
 
         InitializeWeapon();
     }
@@ -124,10 +125,19 @@ public partial class Form1 : Form, IMessageFilter
 
     private void label1_Click(object sender, EventArgs e) { }
 
-    /// <summary>
-    /// Repeats every set GameTimer interval (the interval is set from the Form1 design screen)
-    /// Mainly used for sending updates to the server about player actions
-    /// </summary>
-    private void GameTimer_Tick(object sender, EventArgs e) =>
+    private void KeyIsDown(object sender, KeyEventArgs e)
+    {
+	    if (e.KeyCode == Keys.Space)
+	    {
+		    Bullet bullet = new Bullet();
+		    bullet.MakeBullet(this, Globals.ThisPlayer);
+	    }
+    }
+
+	/// <summary>
+	/// Repeats every set GameTimer interval (the interval is set from the Form1 design screen)
+	/// Mainly used for sending updates to the server about player actions
+	/// </summary>
+	private void GameTimer_Tick(object sender, EventArgs e) =>
         _ = UpdateHandler?.UpdateAsync();
 }

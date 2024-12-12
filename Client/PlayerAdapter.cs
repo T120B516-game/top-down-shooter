@@ -6,6 +6,10 @@ namespace Client
     public class PlayerAdapter : CollisionTemplate
     {
         private Player _player;
+
+        public int X => _player.X;
+        public int Y => _player.Y;
+        public string direction => _player.Direction;
         public PlayerAdapter(Player player) => _player = player;
 
         public PlayerAdapter() => _player = null;
