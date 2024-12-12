@@ -1,6 +1,7 @@
 ﻿using Backend.ChainOfResponsibility;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using Shared;
 
 
 namespace Backend;
@@ -66,7 +67,7 @@ public class GameUpdater
 
             foreach (var enemy in enemies)
             {
-                enemy.PerformMovement(players);
+                enemy.UpdateAI(players);
             }
 
             if (_clients != null)

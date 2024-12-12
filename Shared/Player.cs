@@ -8,4 +8,9 @@ public class Player : IRenderable
 	public required string Image { get; set; }
 	public required int Health { get; set; }
 	public required int Speed { get; set; }
+
+    public void Accept(IPlayerVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
 }

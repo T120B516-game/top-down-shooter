@@ -27,7 +27,12 @@ public class PlayerRepository
 
 		_semaphorSlim.Release();
 
-		return player;
+        var loggingVisitor = new LoggingVisitor();
+        var buffVisitor = new BuffVisitor(10, 5);
+        player.Accept(buffVisitor);
+        player.Accept(loggingVisitor);
+
+        return player;
 	}
 
 	public async Task<Player?> GetAsync(int id)

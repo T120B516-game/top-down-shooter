@@ -14,7 +14,9 @@ public abstract class Enemy : IClonable<Enemy>, IRenderable
 
 	public IMovementBehaviour MovementBehaviour	{ get; set;}
 
-	protected Dictionary<string, string> ImagesDictionary;
+    private IEnemyState _currentState;
+
+    protected Dictionary<string, string> ImagesDictionary;
 
 	public Enemy(int _X, int _Y, int _health, int id)
 	{
@@ -24,12 +26,38 @@ public abstract class Enemy : IClonable<Enemy>, IRenderable
 		Id = id;
 	}
 
-	public void PerformMovement(List<Player> players)
+    public void SetState(IEnemyState state)
+    {
+        _currentState?.ExitState(this);
+        _currentState = state;
+        _currentState.EnterState(this);
+    }
+
+    public void UpdateState(List<Player> players)
+    {
+        _currentState?.UpdateState(this, players);
+    }
+
+    public void TransitionToState(IEnemyState newState)
+    {
+        SetState(newState);
+    }
+
+    public void PerformMovement(List<Player> players)
 	{
 		MovementBehaviour.Move(this, players);
 	}
 
-	public abstract void SetMovementBehaviour(IMovementBehaviour movementBehaviour);
+    public void UpdateAI(List<Player> players)
+    {
+        // Trigger state transitions
+        EnemyAI.HandleStateTransitions(this, players);
+
+        // Update current state behavior
+        UpdateState(players);
+    }
+
+    public abstract void SetMovementBehaviour(IMovementBehaviour movementBehaviour);
 
 	virtual public Enemy DeepClone()
 	{
