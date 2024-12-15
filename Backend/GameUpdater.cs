@@ -72,12 +72,13 @@ public class GameUpdater
 
             foreach (var player in players)
             {
-                var interactionVisitor = new InteractionVisitor(player);
-
-                // Check collisions with obstacles
-                foreach (var obstacle in obstacles)
+                foreach (var otherPlayer in players)
                 {
-                    obstacle.Accept(interactionVisitor);
+                    if (player.Id != otherPlayer.Id && player.IsCollidingWith(otherPlayer))
+                    {
+                        var interactionVisitor = new InteractionVisitor(player);
+                        otherPlayer.Accept(interactionVisitor);
+                    }
                 }
             }
 

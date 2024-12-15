@@ -17,7 +17,12 @@ namespace Shared
 
         public void Visit(Player player)
         {
-            // Leave this empty or handle player-to-player interactions if necessary
+            if (_player.IsCollidingWith(player))
+            {
+
+                Console.WriteLine("labas");
+
+            }
         }
 
         public void Visit(Obstacle obstacle)
