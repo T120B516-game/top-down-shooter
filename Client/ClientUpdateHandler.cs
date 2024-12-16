@@ -91,4 +91,14 @@ public class ClientUpdateHandler
         await _networkHandler.SendTeleportAsync(x, y, Globals.PersonalID);
         Console.WriteLine($"Teleporting player to ({x}, {y})...");
     }
+
+    public async Task HandleEnemyDamageAsync(int id)
+    {
+	    await _networkHandler.DamageEnemy(id);
+    }
+
+    public async Task HandleBulletFired(int id)
+    {
+        await _networkHandler.BulletFired(id);
+    }
 }

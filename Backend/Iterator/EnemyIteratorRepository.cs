@@ -21,5 +21,10 @@ namespace Backend.Iterator
         {
             return _enemyCollection;
         }
+
+        public void Remove(Enemy enemy)
+        {
+            _enemyCollection.Remove(enemy);
+        }
     }
 }

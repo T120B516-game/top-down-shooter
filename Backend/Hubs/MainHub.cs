@@ -1,5 +1,6 @@
 ﻿using Backend.BehavioralPatterns;
 using Microsoft.AspNetCore.SignalR;
+using Shared;
 using System.Collections.Concurrent;
 
 namespace Backend.Hubs;
@@ -7,15 +8,18 @@ namespace Backend.Hubs;
 public class MainHub : Hub
 {
     private readonly PlayerRepository _playerRepository;
+    private readonly EnemyRepository _enemyRepository;
     private readonly GameUpdater _gameUpdater;
     private readonly PlayerController _playerController;
 
     public MainHub(
         PlayerRepository playerRepository,
+        EnemyRepository enemyRepository,
         GameUpdater gameUpdater,
         PlayerController playerController)
     {
         _playerRepository = playerRepository;
+        _enemyRepository = enemyRepository;
         _gameUpdater = gameUpdater;
         _playerController = playerController;
     }
@@ -111,4 +115,31 @@ public class MainHub : Hub
         // Broadcast the teleportation to all clients
         //await Clients.All.SendAsync("PlayerTeleported", playerId, x, y);
     }
+
+    [HubMethodName("DamageEnemy")]
+    public async Task DamageEnemy(int enemyId)
+    {
+        var enemies = await _enemyRepository.ListAsync();
+        var enemy = enemies.Where(e => e.Id == enemyId).FirstOrDefault();
+        if (enemy is not null)
+        {
+            if (enemy.Health > 20)
+            {
+                enemy.Health -= 20;
+            }
+            else
+            {
+                _enemyRepository.Remove(enemy);
+                await Clients.All.SendAsync("RemoveEnemy", enemyId);
+            }
+        }
+    }
+
+    [HubMethodName("BulletFired")]
+    public async Task BulletFired(int playerId)
+    {
+		var player = await _playerRepository.GetAsync(playerId);
+        if(player is not null)
+            await Clients.All.SendAsync("SpawnBullet", player.Id, player.X, player.Y, player.Direction);
+	}
 }

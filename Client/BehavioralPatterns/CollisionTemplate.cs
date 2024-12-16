@@ -14,7 +14,7 @@
 			{
 				InteractWithCollider(collider);
 			}
-			if (param is not null)
+			if (collided)
 			{
 				ResponseToCollision(param);
 			}

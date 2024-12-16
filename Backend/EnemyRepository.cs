@@ -46,4 +46,9 @@ public class EnemyRepository
 
         return await Task.FromResult(enemyList);
     }
+
+	public void Remove(Enemy enemy)
+	{
+		_enemyIteratorRepository.Remove(enemy);
+	}
 }

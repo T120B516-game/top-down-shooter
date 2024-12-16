@@ -1,4 +1,4 @@
-﻿namespace Shared;
+namespace Shared;
 
 public class Player : IRenderable, IVisitable
 {
@@ -8,6 +8,7 @@ public class Player : IRenderable, IVisitable
 	public required string Image { get; set; }
 	public required int Health { get; set; }
 	public required int Speed { get; set; }
+	public required string Direction { get; set; }
 
     public void Accept(IPlayerVisitor visitor)
     {

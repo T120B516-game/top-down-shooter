@@ -21,6 +21,7 @@ public partial class Form1 : Form, IMessageFilter
         InitializeComponent();
         Application.AddMessageFilter(this);
         this.Paint += new PaintEventHandler(OnPaint);
+        this.KeyDown += KeyIsDown;
 
         InitializeWeapon();
     }
@@ -46,6 +47,14 @@ public partial class Form1 : Form, IMessageFilter
         {
             _obstacles = DeserializerObstacles.DeserializeObstacles(obstaclesJson);
             Invalidate();
+        });
+        _mainHubClient.Connection.On<int>("RemoveEnemy", enemyId =>
+        {
+            Invoke(() => RemoveEnemy(enemyId));
+        });
+        _mainHubClient.Connection.On<int, int, int, string>("SpawnBullet", (playerId, x, y, direction) =>
+        {
+            Invoke(() => SpawnBullet(playerId, x, y, direction));
         });
 
         await _mainHubClient.Connection.SendAsync("CreatePlayer");
@@ -124,10 +133,38 @@ public partial class Form1 : Form, IMessageFilter
 
     private void label1_Click(object sender, EventArgs e) { }
 
-    /// <summary>
-    /// Repeats every set GameTimer interval (the interval is set from the Form1 design screen)
-    /// Mainly used for sending updates to the server about player actions
-    /// </summary>
-    private void GameTimer_Tick(object sender, EventArgs e) =>
+    private void RemoveEnemy(int enemyId) 
+    {
+		foreach (var picture in this.Controls.OfType<PictureBox>())
+		{
+			if (picture.Tag is int numericTag && numericTag == enemyId)
+			{
+				picture.Dispose();
+			}
+		}
+	}
+
+    private void SpawnBullet(int playerId, int x, int y, string direction)
+    {
+        if(playerId != Globals.PersonalID)
+        {
+            new Bullet(this, playerId, x, y, direction);
+		}
+    }
+
+    private void KeyIsDown(object sender, KeyEventArgs e)
+    {
+	    if (e.KeyCode == Keys.Space)
+	    {
+		    new Bullet(this, Globals.ThisPlayer, UpdateHandler);
+            UpdateHandler.HandleBulletFired(Globals.PersonalID);
+	    }
+    }
+
+	/// <summary>
+	/// Repeats every set GameTimer interval (the interval is set from the Form1 design screen)
+	/// Mainly used for sending updates to the server about player actions
+	/// </summary>
+	private void GameTimer_Tick(object sender, EventArgs e) =>
         _ = UpdateHandler?.UpdateAsync();
 }
