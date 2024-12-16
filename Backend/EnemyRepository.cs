@@ -23,14 +23,14 @@ public class EnemyRepository
 		stationaryShootingEnemy.SetMovementBehaviour(new AdvancedMovement());
 		
 		_enemyIteratorRepository.GetIterator().Add(mobileMeeleEnemy);
-		_enemyIteratorRepository.GetIterator().Add(stationaryShootingEnemy);
-		_enemyIteratorRepository.GetIterator().Add(mobileShootingEnemy);
-		_enemyIteratorRepository.GetIterator().Add(stationaryShootingEnemy);
+		//_enemyIteratorRepository.GetIterator().Add(stationaryShootingEnemy);
+		//_enemyIteratorRepository.GetIterator().Add(mobileShootingEnemy);
+		//_enemyIteratorRepository.GetIterator().Add(stationaryShootingEnemy);
         _enemyIteratorRepository.GetIterator().Add(mobileShootingEnemy);
 
-		var clonedEnemy = mobileMeeleEnemy.DeepClone();
+		//var clonedEnemy = mobileMeeleEnemy.DeepClone();
 
-		_enemyIteratorRepository.GetIterator().Add(clonedEnemy);
+		//_enemyIteratorRepository.GetIterator().Add(clonedEnemy);
 	}
 
     public async Task<List<Enemy>> ListAsync()

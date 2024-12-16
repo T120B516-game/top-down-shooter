@@ -34,6 +34,7 @@ public class Startup
 		services.AddSignalR();
 		services.AddSingleton<PlayerRepository>();
 		services.AddSingleton<EnemyRepository>();
+		services.AddSingleton<ObstacleRepository>();
 		services.AddSingleton<GameUpdater>();
 		services.AddSingleton<PlayerController>();
 	}

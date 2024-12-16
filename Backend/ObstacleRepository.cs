@@ -19,5 +19,10 @@ namespace Backend
             var unpenetratable = factory.CreateUnpenetratable(300, 300, 50, 50);
             Obstacles.Add(unpenetratable);
         }
+
+        public async Task<List<Obstacle>> ListAsync()
+        {
+            return Obstacles.ToList();
+        }
     }
 }

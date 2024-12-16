@@ -1,6 +1,8 @@
 ﻿using Backend.ChainOfResponsibility;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using Shared;
+using System.Numerics;
 
 
 namespace Backend;
@@ -12,16 +14,18 @@ public class GameUpdater
 {
     private readonly PlayerRepository _playerRepository;
     private readonly EnemyRepository _enemyRepository;
+    private readonly ObstacleRepository _obstacleRepository;
     private readonly ILoggerHandler _loggerChain;
 
     private IHubCallerClients? _clients = null;
     private Task _broadcastingTask;
     private bool _shouldUpdateObstacles = true;
 
-    public GameUpdater(PlayerRepository playerRepository, EnemyRepository enemyRepository)
+    public GameUpdater(PlayerRepository playerRepository, EnemyRepository enemyRepository, ObstacleRepository obstacleRepository)
     {
         _playerRepository = playerRepository;
         _enemyRepository = enemyRepository;
+        _obstacleRepository = obstacleRepository;
 
         if (!Directory.Exists("logs"))
         {
@@ -35,6 +39,7 @@ public class GameUpdater
         var textLogger = new TextLogger("logs/textLog.txt", jsonLogger);
 
         _loggerChain = textLogger; // Starting point of the chain
+
     }
 
     /// <summary>
@@ -56,6 +61,7 @@ public class GameUpdater
         {
             var players = await _playerRepository.ListAsync();
             var enemies = await _enemyRepository.ListAsync();
+            var obstacles = await _obstacleRepository.ListAsync();
 
             // Log data
             //var logMessage = $"Players: {players.Count}, Enemies: {enemies.Count}";
@@ -64,9 +70,21 @@ public class GameUpdater
             var enemiesJson = JsonConvert.SerializeObject(enemies);
             var playersJson = JsonConvert.SerializeObject(players);
 
+            foreach (var player in players)
+            {
+                foreach (var otherPlayer in players)
+                {
+                    if (player.Id != otherPlayer.Id && player.IsCollidingWith(otherPlayer))
+                    {
+                        var interactionVisitor = new InteractionVisitor(player);
+                        otherPlayer.Accept(interactionVisitor);
+                    }
+                }
+            }
+
             foreach (var enemy in enemies)
             {
-                enemy.PerformMovement(players);
+                enemy.UpdateAI(players);
             }
 
             if (_clients != null)
@@ -74,6 +92,7 @@ public class GameUpdater
                 if (_shouldUpdateObstacles) // Only update if there are changes
                 {
                     var obstacleData = JsonConvert.SerializeObject(ObstacleRepository.Obstacles);
+
                     await _clients.All.SendAsync("ReceiveObstaclesUpdate", obstacleData);
                     _shouldUpdateObstacles = false; // Reset the flag
                 }

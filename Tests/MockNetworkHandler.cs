@@ -17,4 +17,9 @@ public class MockNetworkHandler : INetworkHandler
 
 		return Task.CompletedTask;
 	}
+
+	public Task SendTeleportAsync(int x, int y, int playerId) 
+	{ 
+		return Task.CompletedTask;
+	}
 }
