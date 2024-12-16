@@ -48,6 +48,14 @@ public partial class Form1 : Form, IMessageFilter
             _obstacles = DeserializerObstacles.DeserializeObstacles(obstaclesJson);
             Invalidate();
         });
+        _mainHubClient.Connection.On<int>("RemoveEnemy", enemyId =>
+        {
+            Invoke(() => RemoveEnemy(enemyId));
+        });
+        _mainHubClient.Connection.On<int, int, int, string>("SpawnBullet", (playerId, x, y, direction) =>
+        {
+            Invoke(() => SpawnBullet(playerId, x, y, direction));
+        });
 
         await _mainHubClient.Connection.SendAsync("CreatePlayer");
 
@@ -125,12 +133,31 @@ public partial class Form1 : Form, IMessageFilter
 
     private void label1_Click(object sender, EventArgs e) { }
 
+    private void RemoveEnemy(int enemyId) 
+    {
+		foreach (var picture in this.Controls.OfType<PictureBox>())
+		{
+			if (picture.Tag is int numericTag && numericTag == enemyId)
+			{
+				picture.Dispose();
+			}
+		}
+	}
+
+    private void SpawnBullet(int playerId, int x, int y, string direction)
+    {
+        if(playerId != Globals.PersonalID)
+        {
+            new Bullet(this, playerId, x, y, direction);
+		}
+    }
+
     private void KeyIsDown(object sender, KeyEventArgs e)
     {
 	    if (e.KeyCode == Keys.Space)
 	    {
-		    Bullet bullet = new Bullet();
-		    bullet.MakeBullet(this, Globals.ThisPlayer);
+		    new Bullet(this, Globals.ThisPlayer, UpdateHandler);
+            UpdateHandler.HandleBulletFired(Globals.PersonalID);
 	    }
     }
 
