@@ -8,13 +8,13 @@ namespace Backend.Hubs;
 public class MainHub : Hub
 {
     private readonly PlayerRepository _playerRepository;
-    private readonly EnemyRepository _enemyRepository;
+    private readonly IEnemyRepository _enemyRepository;
     private readonly GameUpdater _gameUpdater;
     private readonly PlayerController _playerController;
 
     public MainHub(
         PlayerRepository playerRepository,
-        EnemyRepository enemyRepository,
+        IEnemyRepository enemyRepository,
         GameUpdater gameUpdater,
         PlayerController playerController)
     {

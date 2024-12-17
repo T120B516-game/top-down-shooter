@@ -13,7 +13,7 @@ namespace Backend;
 public class GameUpdater
 {
     private readonly PlayerRepository _playerRepository;
-    private readonly EnemyRepository _enemyRepository;
+    private readonly IEnemyRepository _enemyRepository;
     private readonly ObstacleRepository _obstacleRepository;
     private readonly ILoggerHandler _loggerChain;
 
@@ -21,7 +21,7 @@ public class GameUpdater
     private Task _broadcastingTask;
     private bool _shouldUpdateObstacles = true;
 
-    public GameUpdater(PlayerRepository playerRepository, EnemyRepository enemyRepository, ObstacleRepository obstacleRepository)
+    public GameUpdater(PlayerRepository playerRepository, IEnemyRepository enemyRepository, ObstacleRepository obstacleRepository)
     {
         _playerRepository = playerRepository;
         _enemyRepository = enemyRepository;
@@ -50,10 +50,18 @@ public class GameUpdater
         if (_clients is not null) return;
         _clients = hubContext;
 
+        AddEnemiesForTesting();
         _broadcastingTask = LoopBroadcastAsync();
     }
 
-    private async Task LoopBroadcastAsync()
+    private void AddEnemiesForTesting()
+    {
+        _enemyRepository.Add(5, 200, 500, "mobile", "meele");
+        _enemyRepository.Add(6, 200, 700, "mobile", "shooting");
+		_enemyRepository.Add(7, 300, 550, "stationary", "shooting");
+	}
+
+	private async Task LoopBroadcastAsync()
     {
         var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(20));
 
