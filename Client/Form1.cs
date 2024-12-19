@@ -59,11 +59,11 @@ public partial class Form1 : Form, IMessageFilter
 		});
 		_mainHubClient.Connection.On<int>("RemoveEnemy", enemyId =>
 		{
-			_networkComponent.OnRemoveEnemy(enemyId);
+			Invoke(() => _networkComponent.OnRemoveEnemy(enemyId));
 		});
 		_mainHubClient.Connection.On<int, int, int, string>("SpawnBullet", (playerId, x, y, direction) =>
 		{
-			_networkComponent.OnSpawnBullet(playerId, x, y, direction);
+			Invoke(() => _networkComponent.OnSpawnBullet(playerId, x, y, direction));
 		});
 
 		await _mainHubClient.Connection.SendAsync("CreatePlayer");
