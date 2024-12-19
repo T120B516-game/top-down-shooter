@@ -1,5 +1,7 @@
-﻿using Client.HubClients;
+﻿using Client.Composite;
+using Client.HubClients;
 using Client.Observer;
+using System.Windows.Forms;
 
 namespace Client;
 
@@ -13,6 +15,9 @@ public class ClientUpdateHandler
     private readonly MovementHandler _movementHandler = new();
     private readonly CrosshairRenderer _crosshairRenderer = new();
     private readonly PauseHandler _pauseHandler = new();
+
+    private readonly MenuStrip _menu;
+    private bool _menuIsActive = false;
 
     private readonly List<object> _components = [];
 
@@ -32,6 +37,8 @@ public class ClientUpdateHandler
         _components.Add(_movementHandler);
         _components.Add(_crosshairRenderer);
         _components.Add(_pauseHandler);
+
+        _menu = CreateMenu();
     }
 
     public void OnKeyDown(object? sender, KeyEventArgs e) =>
@@ -72,8 +79,33 @@ public class ClientUpdateHandler
     {
         if (_pauseHandler.IsPaused)
         {
+            _crosshairRenderer.Update();
+
+            if(!_menuIsActive)
+            {
+				_menuIsActive = true;
+                _containerControl.Controls.Add(_menu);
+
+				if (_containerControl is Form form)
+				{
+					form.MainMenuStrip = _menu;
+				}
+
+				_menu.BringToFront();
+			}
+
             return false;
         }
+        else if(_menuIsActive)
+        {
+            _menuIsActive = false;
+			_containerControl.Controls.Remove(_menu);
+
+			if (_containerControl is Form form)
+			{
+				form.MainMenuStrip = null;
+			}
+		}
 
         await _movementHandler.SendAsync(_networkHandler);
 
@@ -101,4 +133,29 @@ public class ClientUpdateHandler
     {
         await _networkHandler.BulletFired(id);
     }
+
+    private static MenuStrip CreateMenu()
+    {
+		var menuStrip = new MenuStrip();
+
+		// Build the menu structure
+		var fileMenu = new MenuComposite("File");
+		fileMenu.Add(new MenuItemLeaf("New", (s, e) => MessageBox.Show("New clicked!")));
+		fileMenu.Add(new MenuItemLeaf("Open", (s, e) => MessageBox.Show("Open clicked!")));
+		fileMenu.Add(new MenuItemLeaf("Save", (s, e) => MessageBox.Show("Save clicked!")));
+		fileMenu.Add(new MenuItemLeaf("Exit", (s, e) => Application.Exit()));
+
+		var editMenu = new MenuComposite("Edit");
+		editMenu.Add(new MenuItemLeaf("Undo", (s, e) => MessageBox.Show("Undo clicked!")));
+		editMenu.Add(new MenuItemLeaf("Redo", (s, e) => MessageBox.Show("Redo clicked!")));
+
+		var mainMenu = new MenuComposite("Main Menu");
+		mainMenu.Add(fileMenu);
+		mainMenu.Add(editMenu);
+
+		// Add the menu to the MenuStrip
+		menuStrip.Items.Add(mainMenu.CreateMenuItem());
+
+        return menuStrip;
+	}
 }
